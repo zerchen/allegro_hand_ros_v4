@@ -129,7 +129,7 @@ void AllegroHandNode::updateWriteReadCAN() {
   // CAN bus communication.
   canDevice->setTorque(desired_torque);
   lEmergencyStop = canDevice->Update();
-  canDevice->getJointInfo(current_position);
+  canDevice->getJointInfo(current_position, current_velocity);
 
   if (lEmergencyStop < 0) {
     // Stop program when Allegro Hand is switched off
@@ -152,26 +152,14 @@ void AllegroHandNode::updateController() {
 
   tstart = tnow;
 
-  // save last iteration info
-  for (int i = 0; i < DOF_JOINTS; i++) {
-    previous_position[i] = current_position[i];
-    previous_position_filtered[i] = current_position_filtered[i];
-    previous_velocity[i] = current_velocity[i];
-  }
-
   updateWriteReadCAN();
 
   // Low-pass filtering.
   for (int i = 0; i < DOF_JOINTS; i++) {
-    current_position_filtered[i] = (0.6 * current_position_filtered[i]) +
-                                   (0.198 * previous_position[i]) +
-                                   (0.198 * current_position[i]);
-    current_velocity[i] =
-            (current_position_filtered[i] - previous_position_filtered[i]) / dt;
-    current_velocity_filtered[i] = (0.6 * current_velocity_filtered[i]) +
-                                   (0.198 * previous_velocity[i]) +
-                                   (0.198 * current_velocity[i]);
-    current_velocity[i] = (current_position[i] - previous_position[i]) / dt;
+    current_position_filtered[i] = (0.9 * current_position_filtered[i]) +
+                                   (0.1 * current_position[i]);
+    current_velocity_filtered[i] = (0.9 * current_velocity_filtered[i]) +
+                                   (0.1 * current_velocity[i]);
   }
 
   computeDesiredTorque();

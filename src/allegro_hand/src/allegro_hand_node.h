@@ -81,13 +81,10 @@ class AllegroHandNode {
  protected:
 
   double current_position[DOF_JOINTS] = {0.0};
-  double previous_position[DOF_JOINTS] = {0.0};
 
   double current_position_filtered[DOF_JOINTS] = {0.0};
-  double previous_position_filtered[DOF_JOINTS] = {0.0};
 
   double current_velocity[DOF_JOINTS] = {0.0};
-  double previous_velocity[DOF_JOINTS] = {0.0};
   double current_velocity_filtered[DOF_JOINTS] = {0.0};
 
   double desired_torque[DOF_JOINTS] = {0.0};

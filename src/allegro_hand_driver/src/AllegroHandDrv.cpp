@@ -204,24 +204,26 @@ void AllegroHandDrv::setTorque(double *torque)
     }
 }
 
-void AllegroHandDrv::getJointInfo(double *position)
+void AllegroHandDrv::getJointInfo(double *position, double *velocity)
 {
     for (int i = 0; i < DOF_JOINTS; i++) {
         position[i] = _curr_position[i];
+        velocity[i] = _curr_velocity[i];
     }
 }
 
 void AllegroHandDrv::_readDevices()
 {
     int err;
-    int id;    
+    uint64_t t;
+    int id;
     int len;
     unsigned char data[8];
 
-    err = CANAPI::can_read_message(_can_handle, &id, &len, data, FALSE, 0);
+    err = CANAPI::can_read_message(_can_handle, &t, &id, &len, data, FALSE, 0);
     while (!err) {
-        _parseMessage(id, len, data);
-        err = CANAPI::can_read_message(_can_handle, &id, &len, data, FALSE, 0);
+        _parseMessage(t, id, len, data);
+        err = CANAPI::can_read_message(_can_handle, &t, &id, &len, data, FALSE, 0);
     }
     //ROS_ERROR("can_read_message returns %d.", err); // PCAN_ERROR_QRCVEMPTY(32) from Peak CAN means "Receive queue is empty". It is not an error.
 }
@@ -255,9 +257,10 @@ void AllegroHandDrv::_writeDevices()
     }
 }
 
-void AllegroHandDrv::_parseMessage(int id, int len, unsigned char* data)
+void AllegroHandDrv::_parseMessage(uint64_t timestamp_us, int id, int len, unsigned char* data)
 {
-    int tmppos[4];
+    int raw_pos[4];
+    double tmp_pos[4];
     int lIndexBase;
     int i;
 
@@ -326,17 +329,40 @@ void AllegroHandDrv::_parseMessage(int id, int len, unsigned char* data)
         {
             int findex = (id & 0x00000007);
 
-            tmppos[0] = (short) (data[0] | (data[1] << 8));
-            tmppos[1] = (short) (data[2] | (data[3] << 8));
-            tmppos[2] = (short) (data[4] | (data[5] << 8));
-            tmppos[3] = (short) (data[6] | (data[7] << 8));
+            // Get raw position
+
+            raw_pos[0] = (short) (data[0] | (data[1] << 8));
+            raw_pos[1] = (short) (data[2] | (data[3] << 8));
+            raw_pos[2] = (short) (data[4] | (data[5] << 8));
+            raw_pos[3] = (short) (data[6] | (data[7] << 8));
 
             lIndexBase = findex * 4;
 
-            _curr_position[lIndexBase+0] = (double)(tmppos[0]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-            _curr_position[lIndexBase+1] = (double)(tmppos[1]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-            _curr_position[lIndexBase+2] = (double)(tmppos[2]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-            _curr_position[lIndexBase+3] = (double)(tmppos[3]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
+            // Compute the actual position in radian
+
+            tmp_pos[0] = (double)(raw_pos[0]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
+            tmp_pos[1] = (double)(raw_pos[1]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
+            tmp_pos[2] = (double)(raw_pos[2]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
+            tmp_pos[3] = (double)(raw_pos[3]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
+
+            // Compute the velocity
+            if(timestamp_us != _timestamp_position[lIndexBase+0] && timestamp_us != _timestamp_position[lIndexBase+1] && timestamp_us != _timestamp_position[lIndexBase+2] && timestamp_us != _timestamp_position[lIndexBase+3]) {
+                _curr_velocity[lIndexBase+0] = 1e6 * (tmp_pos[0] - _curr_position[lIndexBase+0]) / (timestamp_us - _timestamp_position[lIndexBase+0]);
+                _curr_velocity[lIndexBase+1] = 1e6 * (tmp_pos[1] - _curr_position[lIndexBase+1]) / (timestamp_us - _timestamp_position[lIndexBase+1]);
+                _curr_velocity[lIndexBase+2] = 1e6 * (tmp_pos[2] - _curr_position[lIndexBase+2]) / (timestamp_us - _timestamp_position[lIndexBase+2]);
+                _curr_velocity[lIndexBase+3] = 1e6 * (tmp_pos[3] - _curr_position[lIndexBase+3]) / (timestamp_us - _timestamp_position[lIndexBase+3]);
+            }
+
+            // Update stored values
+            _curr_position[lIndexBase+0] = tmp_pos[0];
+            _curr_position[lIndexBase+1] = tmp_pos[1];
+            _curr_position[lIndexBase+2] = tmp_pos[2];
+            _curr_position[lIndexBase+3] = tmp_pos[3];
+
+            _timestamp_position[lIndexBase+0] = timestamp_us;
+            _timestamp_position[lIndexBase+1] = timestamp_us;
+            _timestamp_position[lIndexBase+2] = timestamp_us;
+            _timestamp_position[lIndexBase+3] = timestamp_us;
 
             _curr_position_get |= (0x01 << (findex));
         }

@@ -234,6 +234,7 @@ int can_write_message(void* ch, int id, int len, unsigned char* data, int blocki
 /**
  * @brief can_read_message
  * @param ch
+ * @param timestamp_us
  * @param id
  * @param len
  * @param data
@@ -241,7 +242,7 @@ int can_write_message(void* ch, int id, int len, unsigned char* data, int blocki
  * @param timeout_usec
  * @return
  */
-int can_read_message(void* ch, int* id, int* len, unsigned char* data, int blocking, int timeout_usec);
+int can_read_message(void* ch,uint64_t *timestamp_us, int* id, int* len, unsigned char* data, int blocking, int timeout_usec);
 
 CANAPI_END
 

@@ -61,7 +61,7 @@ public:
     bool init(int mode = 0);                ///< initialize Allegro Hand driver and CAN channel
 
     void setTorque(double *torque);         ///< set desired joint torque
-    void getJointInfo(double *position);    ///< get current joint position
+    void getJointInfo(double *position, double *velocity);    ///< get current joint position
 
     bool emergencyStop() { return _emergency_stop; }        ///< whether emergency is activated
     double torqueConversion() { return _tau_cov_const; }    ///< get torque conversion constant
@@ -76,6 +76,8 @@ private:
     void* _can_handle;                      ///< CAN device(driver) handle
 
     double _curr_position[DOF_JOINTS];      ///< current joint position (radian)
+    double _curr_velocity[DOF_JOINTS];      ///< current joint position (radian)
+    uint64_t _timestamp_position[DOF_JOINTS];///< Date at which the last position was received (µsec)
     double _curr_torque[DOF_JOINTS];        ///< current joint torque (Nm)
     double _desired_position[DOF_JOINTS];   ///< desired joint position (radian)
     double _desired_torque[DOF_JOINTS];     ///< desired joint torque (Nm)
@@ -98,7 +100,7 @@ private:
     void _readDevices();                    ///< read CAN messages
     void _writeDevices();                   ///< write CAN messages(torque command)
     //void _parseMessage(char cmd, char src, char des, int len, unsigned char* data); ///< parse CAN messages and calculate current joint angles from encoder values
-    void _parseMessage(int id, int len, unsigned char* data);
+    void _parseMessage(uint64_t timestamp_us, int id, int len, unsigned char* data);
 };
 
 }

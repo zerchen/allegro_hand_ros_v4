@@ -100,7 +100,7 @@ unsigned char CAN_ID = 0;
 /*==========================================*/
 /*       Private functions prototypes       */
 /*==========================================*/
-int canReadMsg(void* ch, int *id, int *len, unsigned char *data, int blocking, int timeout_usec);
+int canReadMsg(void* ch, uint64_t *timestamp_us, int *id, int *len, unsigned char *data, int blocking, int timeout_usec);
 int canSendMsg(void* ch, int id, char len, unsigned char *data, int blocking, int timeout_usec);
 int canSentRTR(void* ch, int id, int blocking, int timeout_usec);
 
@@ -137,7 +137,7 @@ int canInit(void* ch)
     return 0; // PCAN_ERROR_OK
 }
 
-int canReadMsg(void* ch, int *id, int *len, unsigned char *data, int blocking, int timeout_usec){
+int canReadMsg(void* ch, uint64_t *timestamp_us, int *id, int *len, unsigned char *data, int blocking, int timeout_usec){
     int err;
     int i;
     TPCANRdMsg CanMsg;
@@ -156,6 +156,7 @@ int canReadMsg(void* ch, int *id, int *len, unsigned char *data, int blocking, i
         return err;
     }
 
+    *timestamp_us = (uint64_t) CanMsg.dwTime * 1000 + CanMsg.wUsec;
     *id = (CanMsg.Msg.ID & 0xfffffffc) >> 2;;
     *len = CanMsg.Msg.LEN;
     for(i = 0; i < CanMsg.Msg.LEN; i++)
@@ -470,10 +471,10 @@ int can_write_message(void* ch, int id, int len, unsigned char* data, int blocki
     return err;
 }
 
-int can_read_message(void* ch, int* id, int* len, unsigned char* data, int blocking, int timeout_usec)
+int can_read_message(void* ch, uint64_t *timestamp_us, int* id, int* len, unsigned char* data, int blocking, int timeout_usec)
 {
     int err;
-    err = canReadMsg(ch, id, len, data, blocking, timeout_usec);
+    err = canReadMsg(ch, timestamp_us, id, len, data, blocking, timeout_usec);
     return err;
 }
 
