@@ -259,13 +259,8 @@ void AllegroHandDrv::_writeDevices()
 
 void AllegroHandDrv::_parseMessage(uint64_t timestamp_us, int id, int len, unsigned char* data)
 {
-    int raw_pos[4];
-    double tmp_pos[4];
-    int lIndexBase;
-    int i;
-
-    //v4 
-    switch (id) 
+    //v4
+    switch (id)
     {
         case ID_RTR_HAND_INFO:
         {
@@ -312,8 +307,6 @@ void AllegroHandDrv::_parseMessage(uint64_t timestamp_us, int id, int len, unsig
             _pwm_max[eJOINTNAME_THUMB_1] = min(_pwm_max_global, PWM_LIMIT_THUMB_NEAR);
             _pwm_max[eJOINTNAME_THUMB_2] = min(_pwm_max_global, PWM_LIMIT_THUMB_MIDDLE);
             _pwm_max[eJOINTNAME_THUMB_3] = min(_pwm_max_global, PWM_LIMIT_THUMB_FAR);
-            
-
         }
             break;
         case ID_RTR_SERIAL:
@@ -327,42 +320,28 @@ void AllegroHandDrv::_parseMessage(uint64_t timestamp_us, int id, int len, unsig
         case ID_RTR_FINGER_POSE_3:
         case ID_RTR_FINGER_POSE_4:
         {
-            int findex = (id & 0x00000007);
+            const int findex = (id & 0x00000007); // Finger number
+            const int lIndexBase = findex * 4; // Finger base joint index
 
-            // Get raw position
+            //For each knuckle
+            for(int k=0;k < 4;k++) {
+                const int kindex = lIndexBase + k; // current knuckle index
 
-            raw_pos[0] = (short) (data[0] | (data[1] << 8));
-            raw_pos[1] = (short) (data[2] | (data[3] << 8));
-            raw_pos[2] = (short) (data[4] | (data[5] << 8));
-            raw_pos[3] = (short) (data[6] | (data[7] << 8));
+                // Get raw position
+                const int raw_pos = (short) (data[k*2] | (data[(k*2)+1] << 8));
 
-            lIndexBase = findex * 4;
+                // Compute the actual position in radian
+                const double tmp_pos = (double) raw_pos * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
 
-            // Compute the actual position in radian
+                // Compute the velocity
+                if(timestamp_us != _timestamp_position[kindex]) { // Check for zero devision
+                    _curr_velocity[kindex] = 1e6 * (tmp_pos - _curr_position[kindex]) / (timestamp_us - _timestamp_position[kindex]);
+                }
 
-            tmp_pos[0] = (double)(raw_pos[0]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-            tmp_pos[1] = (double)(raw_pos[1]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-            tmp_pos[2] = (double)(raw_pos[2]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-            tmp_pos[3] = (double)(raw_pos[3]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-
-            // Compute the velocity
-            if(timestamp_us != _timestamp_position[lIndexBase+0] && timestamp_us != _timestamp_position[lIndexBase+1] && timestamp_us != _timestamp_position[lIndexBase+2] && timestamp_us != _timestamp_position[lIndexBase+3]) {
-                _curr_velocity[lIndexBase+0] = 1e6 * (tmp_pos[0] - _curr_position[lIndexBase+0]) / (timestamp_us - _timestamp_position[lIndexBase+0]);
-                _curr_velocity[lIndexBase+1] = 1e6 * (tmp_pos[1] - _curr_position[lIndexBase+1]) / (timestamp_us - _timestamp_position[lIndexBase+1]);
-                _curr_velocity[lIndexBase+2] = 1e6 * (tmp_pos[2] - _curr_position[lIndexBase+2]) / (timestamp_us - _timestamp_position[lIndexBase+2]);
-                _curr_velocity[lIndexBase+3] = 1e6 * (tmp_pos[3] - _curr_position[lIndexBase+3]) / (timestamp_us - _timestamp_position[lIndexBase+3]);
+                // Update stored values
+                _curr_position[kindex] = tmp_pos;
+                _timestamp_position[kindex] = timestamp_us;
             }
-
-            // Update stored values
-            _curr_position[lIndexBase+0] = tmp_pos[0];
-            _curr_position[lIndexBase+1] = tmp_pos[1];
-            _curr_position[lIndexBase+2] = tmp_pos[2];
-            _curr_position[lIndexBase+3] = tmp_pos[3];
-
-            _timestamp_position[lIndexBase+0] = timestamp_us;
-            _timestamp_position[lIndexBase+1] = timestamp_us;
-            _timestamp_position[lIndexBase+2] = timestamp_us;
-            _timestamp_position[lIndexBase+3] = timestamp_us;
 
             _curr_position_get |= (0x01 << (findex));
         }
