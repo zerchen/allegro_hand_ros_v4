@@ -32,7 +32,7 @@ fi
 echo -e "\n\nBuilding the [[$HAND]] Allegro Hand URDF...\n"
 
 
-rosrun xacro xacro.py allegro_hand_description_$hand.xacro -o allegro_hand_description_$hand.urdf
+rosrun xacro xacro allegro_hand_description_$hand.xacro -o allegro_hand_description_$hand.urdf
 
 rosrun urdf check_urdf allegro_hand_description_$hand.urdf 
 
