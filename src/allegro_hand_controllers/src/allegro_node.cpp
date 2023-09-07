@@ -93,21 +93,6 @@ void AllegroNode::publishData() {
 }
 
 void AllegroNode::updateController() {
-
-  // Calculate loop time;
-  tnow = ros::Time::now();
-  dt = 1e-9 * (tnow - tstart).nsec;
-
-  // When running gazebo, sometimes the loop gets called *too* often and dt will
-  // be zero. Ensure nothing bad (like divide-by-zero) happens because of this.
-  if(dt <= 0) {
-    ROS_DEBUG_STREAM_THROTTLE(1, "AllegroNode::updateController dt is zero.");
-    return;
-  }
-
-  tstart = tnow;
-
-
   if (canDevice)
   {
     // try to update joint positions through CAN comm:
@@ -116,6 +101,19 @@ void AllegroNode::updateController() {
     // check if all positions are updated:
     if (lEmergencyStop == 0 && canDevice->isJointInfoReady())
     {
+      // Calculate loop time;
+      tnow = ros::Time::now();
+      dt = (tnow - tstart).toSec();
+
+      // When running gazebo, sometimes the loop gets called *too* often and dt will
+      // be zero. Ensure nothing bad (like divide-by-zero) happens because of this.
+      if(dt <= 0) {
+        ROS_DEBUG_STREAM_THROTTLE(1, "AllegroNode::updateController dt is zero.");
+        return;
+      }
+
+      tstart = tnow;
+
       // back-up previous joint positions:
       for (int i = 0; i < DOF_JOINTS; i++) {
         previous_position[i] = current_position[i];

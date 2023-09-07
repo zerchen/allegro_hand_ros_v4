@@ -141,7 +141,7 @@ void AllegroHandNode::updateWriteReadCAN() {
 void AllegroHandNode::updateController() {
   // Calculate loop time;
   tnow = ros::Time::now();
-  dt = 1e-9 * (tnow - tstart).nsec;
+  dt = (tnow - tstart).toSec();
 
   // When running gazebo, sometimes the loop gets called *too* often and dt will
   // be zero. Ensure nothing bad (like divide-by-zero) happens because of this.
