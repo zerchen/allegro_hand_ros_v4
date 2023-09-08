@@ -3,7 +3,7 @@
 #include "bhand/BHand.h"
 
 // The only topic specific to the 'grasp' controller is the envelop torque.
-const std::string ENVELOP_TORQUE_TOPIC = "allegroHand/envelop_torque";
+const std::string ENVELOP_TORQUE_TOPIC = "envelop_torque";
 
 // Define a map from string (received message) to eMotionType (Bhand controller grasp).
 std::map<std::string, eMotionType> bhand_grasps = {
@@ -76,7 +76,7 @@ void AllegroNodeGrasp::setJointCallback(const sensor_msgs::JointState &msg) {
 }
 
 // The grasp controller can set the desired envelop grasp torque by listening to
-// Float32 messages on ENVELOP_TORQUE_TOPIC ("allegroHand/envelop_torque").
+// Float32 messages on ENVELOP_TORQUE_TOPIC ("envelop_torque").
 void AllegroNodeGrasp::envelopTorqueCallback(const std_msgs::Float32 &msg) {
   const double torque = msg.data;
   ROS_INFO("Setting envelop torque to %.3f.", torque);

@@ -6,7 +6,7 @@
 
 // Joint-space torque control of the Allegro hand.
 //
-// Listens to allegroHand/torque_cmd topic and sets the desired joint torques
+// Listens to torque_cmd topic and sets the desired joint torques
 // directly.
 class AllegroNodeTorque : public AllegroNode {
 

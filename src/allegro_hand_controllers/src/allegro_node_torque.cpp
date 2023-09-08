@@ -6,7 +6,7 @@ using namespace std;
 #include "ros/ros.h"
 
 // Topics
-const std::string TORQUE_CMD_TOPIC = "allegroHand/torque_cmd";
+const std::string TORQUE_CMD_TOPIC = "torque_cmd";
 
 // Constructor: subscribe to topics.
 AllegroNodeTorque::AllegroNodeTorque()

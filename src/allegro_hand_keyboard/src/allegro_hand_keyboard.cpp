@@ -30,7 +30,7 @@ private:
 
 AHKeyboard::AHKeyboard()
 {
-  cmd_pub_ = nh_.advertise<std_msgs::String>("allegroHand/lib_cmd", 10);
+  cmd_pub_ = nh_.advertise<std_msgs::String>("lib_cmd", 10);
 }
 
 

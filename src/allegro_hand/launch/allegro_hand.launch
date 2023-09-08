@@ -81,23 +81,8 @@
         clear_params="true"
         respawn="$(arg RESPAWN)"
         respawn_delay="2"
-        args="$(arg POLLING)" >
-
-    <!-- Remapping of topics into enumerated allegroHand_# namespace -->
-    <remap from="allegroHand/joint_states" to="allegroHand_$(arg NUM)/joint_states"/>
-    <remap from="allegroHand/joint_cmd" to="allegroHand_$(arg NUM)/joint_cmd"/>
-    <remap from="allegroHand/lib_cmd" to="allegroHand_$(arg NUM)/lib_cmd"/>
-    <remap from="allegroHand/torque_cmd" to="allegroHand_$(arg NUM)/torque_cmd"/>
-    <remap from="allegroHand/envelop_torque" to="allegroHand_$(arg NUM)/envelop_torque"/>
-    <remap from="allegroHand/joint_current_states" to="allegroHand_$(arg NUM)/joint_current_states"/>
-    <remap from="allegroHand/joint_desired_states" to="allegroHand_$(arg NUM)/joint_desired_states"/>
-
-    <!--parameters are within the scope of the hand node so that multiple hands can be run at the same time -->
-    <rosparam file="$(arg ZEROS)" command="load" />
-
-    <rosparam file="$(arg PARAMS_DIR)/gains_pd.yaml" command="load" />
-    <rosparam file="$(arg PARAMS_DIR)/gains_velSat.yaml" command="load" />
-    <rosparam file="$(arg PARAMS_DIR)/initial_position.yaml" command="load" />
+        args="$(arg POLLING)"
+        ns="allegroHand_$(arg NUM)" >
 
     <!-- Set the CAN channel automatically (using detect_pcan.py) if the
          AUTO_CAN parameter is true, otherwise use the CAN_DEVICE
@@ -134,7 +119,7 @@
         type="allegro_hand_keyboard"
         output="screen"
         if="$(arg KEYBOARD)">
-    <remap from="allegroHand/lib_cmd" to="allegroHand_$(arg NUM)/lib_cmd"/>
+    <remap from="lib_cmd" to="allegroHand_$(arg NUM)/lib_cmd"/>
   </node>
 
 
