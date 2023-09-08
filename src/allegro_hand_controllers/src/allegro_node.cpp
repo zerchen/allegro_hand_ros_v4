@@ -1,11 +1,16 @@
-// Common allegro node code used by any node. Each node that implements an
-// AllegroNode must define the computeDesiredTorque() method.
-//
-// Author: Felix Duvallet <felix.duvallet@epfl.ch>
-
 #include "allegro_node.h"
 #include "allegro_hand_driver/AllegroHandDrv.h"
+#include <string>
+#include <assert.h>
 
+// trim from end. see http://stackoverflow.com/a/217605/256798
+static inline std::string &rtrim(std::string &s)
+{
+    s.erase(std::find_if(
+        s.rbegin(), s.rend(),
+        std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
 
 std::string jointNames[DOF_JOINTS] =
         {
@@ -16,32 +21,24 @@ std::string jointNames[DOF_JOINTS] =
         };
 
 
-AllegroNode::AllegroNode() {
-  mutex = new boost::mutex();
-
-  // Create arrays 16 long for each of the four joint state components
-  current_joint_state.position.resize(DOF_JOINTS);
-  current_joint_state.velocity.resize(DOF_JOINTS);
-  current_joint_state.effort.resize(DOF_JOINTS);
-  current_joint_state.name.resize(DOF_JOINTS);
-
+AllegroHWI::AllegroHWI() {
   // Initialize values: joint names should match URDF, desired torque and
   // velocity are both zero.
   for (int i = 0; i < DOF_JOINTS; i++) {
-    current_joint_state.name[i] = jointNames[i];
     desired_torque[i] = 0.0;
     current_velocity[i] = 0.0;
     current_position_filtered[i] = 0.0;
     current_velocity_filtered[i] = 0.0;
   }
 
-  // Get Allegro Hand information from parameter server
-  std::string whichHand;
-  ros::param::get("~hand_info/which_hand", whichHand);
-
   // Initialize CAN device
+  std::string can_ch;
+  assert(ros::param::has("~comm/CAN_CH"));
+  ros::param::get("~comm/CAN_CH", can_ch);
+  rtrim(can_ch);  // Ensure the ROS parameter has no trailing whitespace.
+
   canDevice = new allegro::AllegroHandDrv();
-  if (canDevice->init()) {
+  if (canDevice->init(can_ch)) {
       usleep(3000);
   }
   else {
@@ -49,92 +46,102 @@ AllegroNode::AllegroNode() {
       canDevice = 0;
   }
 
-  // Start ROS time
-  tstart = ros::Time::now();
-
-  // Advertise current joint state publisher and subscribe to desired joint
-  // states.
-  joint_state_pub = nh.advertise<sensor_msgs::JointState>(JOINT_STATE_TOPIC, 3);
-  joint_cmd_sub = nh.subscribe(DESIRED_STATE_TOPIC, 1, // queue size
-                                &AllegroNode::desiredStateCallback, this);
-}
-
-AllegroNode::~AllegroNode() {
-  if (canDevice) delete canDevice;
-  delete mutex;
-  nh.shutdown();
-}
-
-void AllegroNode::desiredStateCallback(const sensor_msgs::JointState &msg) {
-  mutex->lock();
-  desired_joint_state = msg;
-  mutex->unlock();
-}
-
-void AllegroNode::publishData() {
-  // current position, velocity and effort (torque) published
-  current_joint_state.header.stamp = tnow;
+  // connect and register the joint state interface
   for (int i = 0; i < DOF_JOINTS; i++) {
-    current_joint_state.position[i] = current_position_filtered[i];
-    current_joint_state.velocity[i] = current_velocity_filtered[i];
-    current_joint_state.effort[i] = desired_torque[i];
+    const hardware_interface::JointStateHandle state_handle(jointNames[i], &current_position_filtered[i], &current_velocity_filtered[i], &desired_torque[i]);
+    jnt_state_interface.registerHandle(state_handle);
   }
-  joint_state_pub.publish(current_joint_state);
+
+  registerInterface(&jnt_state_interface);
+
+  // connect and register the joint effort interface
+  for (int i = 0; i < DOF_JOINTS; i++) {
+    const hardware_interface::JointHandle eff_handle(jnt_state_interface.getHandle(jointNames[i]), &desired_torque[0]);
+    jnt_eff_interface.registerHandle(eff_handle);
+  }
+
+  registerInterface(&jnt_eff_interface);
 }
 
-void AllegroNode::updateController() {
-  if (canDevice)
+AllegroHWI::~AllegroHWI() {
+  if (canDevice) delete canDevice;
+}
+
+AllegroHWI::READ_STATUS AllegroHWI::read() {
+  if (!canDevice) {
+    return ERROR;
+  }
+
+  // try to update joint positions through CAN comm:
+  lEmergencyStop |= canDevice->readCANFrames();
+
+  // check if all positions are updated:
+  if (lEmergencyStop) {
+    return ERROR;
+  }
+
+  if(!canDevice->isJointInfoReady())
   {
-    // try to update joint positions through CAN comm:
-    lEmergencyStop = canDevice->readCANFrames();
+    return NOT_READY;
+  }
 
-    // check if all positions are updated:
-    if (lEmergencyStop == 0 && canDevice->isJointInfoReady())
-    {
-      // Calculate loop time;
-      tnow = ros::Time::now();
-      dt = (tnow - tstart).toSec();
+  // update joint positions and velocities:
+  canDevice->getJointInfo(current_position, current_velocity);
 
-      // When running gazebo, sometimes the loop gets called *too* often and dt will
-      // be zero. Ensure nothing bad (like divide-by-zero) happens because of this.
-      if(dt <= 0) {
-        ROS_DEBUG_STREAM_THROTTLE(1, "AllegroNode::updateController dt is zero.");
-        return;
-      }
+  // reset joint position update flag:
+  canDevice->resetJointInfoReady();
 
-      tstart = tnow;
+  return SUCCESS;
+}
 
-      // update joint positions:
-      canDevice->getJointInfo(current_position, current_velocity);
-
-      // low-pass filtering:
-      for (int i = 0; i < DOF_JOINTS; i++) {
-        current_position_filtered[i] = (0.9 * current_position_filtered[i]) +
-                                       (0.1 * current_position[i]);
-        current_velocity_filtered[i] = (0.9 * current_velocity_filtered[i]) +
-                                       (0.1 * current_velocity[i]);
-      }
-
-      // calculate control torque:
-      computeDesiredTorque();
-
-      // set & write torque to each joint:
-      canDevice->setTorque(desired_torque);
-      lEmergencyStop = canDevice->writeJointTorque();
-
-      // reset joint position update flag:
-      canDevice->resetJointInfoReady();
-
-      // publish joint positions to ROS topic:
-      publishData();
-
-      frame++;
-    }
+void AllegroHWI::write() {
+  if (!canDevice) {
+    return;
   }
 
   if (lEmergencyStop < 0) {
     // Stop program when Allegro Hand is switched off
-    ROS_ERROR("Allegro Hand Node is Shutting Down! (Emergency Stop)");
-    ros::shutdown();
+    ROS_ERROR("Command not send : Emergency stop");
   }
+
+  // set & write torque to each joint:
+  canDevice->setTorque(desired_torque);
+  lEmergencyStop |= canDevice->writeJointTorque();
+}
+
+AllegroNode::AllegroNode()
+: robot(),
+  controller_manager(&robot),
+  last_update(0)
+{
+}
+
+void AllegroNode::run() {
+  while (true)
+  {
+    AllegroHWI::READ_STATUS s = robot.read();
+
+    if(s == AllegroHWI::READ_STATUS::ERROR) {
+      break;
+    }
+
+    if(s == AllegroHWI::READ_STATUS::NOT_READY) {
+      continue;
+    }
+
+    if(s == AllegroHWI::READ_STATUS::SUCCESS) {
+      const ros::Time now = ros::Time::now();
+      controller_manager.update(now, now - last_update);
+      robot.write();
+      last_update = now;
+    }
+  }
+}
+
+
+int main(int argc, char** argv) {
+  ros::init(argc, argv, "allegro_node");
+  AllegroNode node;
+  node.run();
+  return -1;
 }

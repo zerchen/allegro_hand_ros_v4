@@ -12,7 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   libpcan
   roscpp
   sensor_msgs
-# roslaunch  # Disabled due to testing
+  hardware_interface
+  controller_manager
 )
 
 ###################################
@@ -33,7 +34,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(allegro_node src/allegro_node.cpp)
+## Declare executables
+add_executable(allegro_node src/allegro_node.cpp)
+target_link_libraries(allegro_node ${catkin_LIBRARIES})
 
 # This is disabled until roslaunch tests can pass required arguments.
 # roslaunch_add_file_check(launch/allegro_hand.launch)

@@ -1,54 +1,36 @@
 //
 // Created by felixd on 10/1/15.
+// Re-wrote by EtienneAr on 08/09/23
 //
-
-#ifndef PROJECT_ALLEGRO_NODE_COMMON_H
-#define PROJECT_ALLEGRO_NODE_COMMON_H
+#pragma once
 
 // Defines DOF_JOINTS.
 #include "allegro_hand_driver/AllegroHandDrv.h"
 using namespace allegro;
 
-#include <string>
-#include <boost/thread/thread.hpp>
+#include <ros/ros.h>
 
-#include "ros/ros.h"
-#include "sensor_msgs/JointState.h"
-#include "std_msgs/String.h"
+#include <hardware_interface/joint_command_interface.h>
+#include <hardware_interface/joint_state_interface.h>
+#include <hardware_interface/robot_hw.h>
+#include <controller_manager/controller_manager.h>
 
 // Forward declaration.
 class AllegroHandDrv;
 
-#define ALLEGRO_CONTROL_TIME_INTERVAL 0.003
-
-// Topic names: current & desired JointState, named grasp to command.
-const std::string JOINT_STATE_TOPIC = "joint_states";
-const std::string DESIRED_STATE_TOPIC = "joint_cmd";
-const std::string LIB_CMD_TOPIC = "lib_cmd";
-
-class AllegroNode {
+class AllegroHWI : public hardware_interface::RobotHW {
  public:
+  enum READ_STATUS { ERROR = -1, SUCCESS = 0, NOT_READY};
 
-  AllegroNode();
+ public:
+  AllegroHWI();
+  virtual ~AllegroHWI();
 
-  virtual ~AllegroNode();
-
-  void publishData();
-
-  void desiredStateCallback(const sensor_msgs::JointState &desired);
-
-  virtual void updateController();
-
-  // This is the main method that must be implemented by the various
-  // controller nodes.
-  virtual void computeDesiredTorque() {
-    ROS_ERROR("Called virtual function!");
-  };
+  READ_STATUS read();
+  void write();
 
  protected:
-
   double current_position[DOF_JOINTS] = {0.0};
-
   double current_position_filtered[DOF_JOINTS] = {0.0};
 
   double current_velocity[DOF_JOINTS] = {0.0};
@@ -56,29 +38,26 @@ class AllegroNode {
 
   double desired_torque[DOF_JOINTS] = {0.0};
 
-  std::string whichHand;  // Right or left hand.
-
-  // ROS stuff
-  ros::NodeHandle nh;
-  ros::Publisher joint_state_pub;
-  ros::Subscriber joint_cmd_sub;
-
-  // Store the current and desired joint states.
-  sensor_msgs::JointState current_joint_state;
-  sensor_msgs::JointState desired_joint_state;
-
-  // ROS Time
-  ros::Time tstart;
-  ros::Time tnow;
-  double dt;
-
   // CAN device
   allegro::AllegroHandDrv *canDevice;
-  boost::mutex *mutex;
 
   // Flags
   int lEmergencyStop = 0;
-  long frame = 0;
+
+ private:
+  hardware_interface::JointStateInterface jnt_state_interface;
+  hardware_interface::EffortJointInterface jnt_eff_interface;
 };
 
-#endif //PROJECT_ALLEGRO_NODE_COMMON_H
+class AllegroNode {
+ public:
+  AllegroNode();
+  virtual ~AllegroNode() = default;
+
+  void run();
+
+ private:
+  AllegroHWI robot;
+  controller_manager::ControllerManager controller_manager;
+  ros::Time last_update;
+};

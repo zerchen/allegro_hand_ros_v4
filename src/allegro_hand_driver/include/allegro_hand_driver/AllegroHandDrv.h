@@ -58,7 +58,7 @@ public:
     AllegroHandDrv();
     ~AllegroHandDrv();
 
-    bool init(int mode = 0);                ///< initialize Allegro Hand driver and CAN channel
+    bool init(std::string can_ch);                ///< initialize Allegro Hand driver and CAN channel
 
     void setTorque(double *torque);         ///< set desired joint torque
     void getJointInfo(double *position, double *velocity);    ///< get current joint position

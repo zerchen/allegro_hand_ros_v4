@@ -91,27 +91,14 @@ AllegroHandDrv::~AllegroHandDrv()
     }
 }
 
-// trim from end. see http://stackoverflow.com/a/217605/256798
-static inline std::string &rtrim(std::string &s)
+bool AllegroHandDrv::init(std::string can_ch)
 {
-    s.erase(std::find_if(
-        s.rbegin(), s.rend(),
-        std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-    return s;
-}
-
-bool AllegroHandDrv::init(int mode)
-{
-    string CAN_CH;
-    ros::param::get("~comm/CAN_CH", CAN_CH);
-    rtrim(CAN_CH);  // Ensure the ROS parameter has no trailing whitespace.
-
-    if (CAN_CH.empty()) {
+    if (can_ch.empty()) {
         ROS_ERROR("Invalid (empty) CAN channel, cannot proceed. Check PCAN comms.");
         return false;
     }
 
-    if (CANAPI::command_can_open_with_name(_can_handle, CAN_CH.c_str())) {
+    if (CANAPI::command_can_open_with_name(_can_handle, can_ch.c_str())) {
         _can_handle = 0;
         return false;
     }

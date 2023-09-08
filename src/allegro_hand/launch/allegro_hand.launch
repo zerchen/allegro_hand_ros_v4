@@ -4,7 +4,6 @@
           HAND:=right|left
        Suggested arguments:
           NUM:=0|1|...
-          CONTROLLER:=grasp|pd|velsat|torque|sim
           RESPAWN:=true|false   Respawn controller if it dies.
           KEYBOARD:=true|false  (default is true)
           AUTO_CAN:=true|false  (if true, ignores CAN_DEVICE argument and finds the can device automagically).
@@ -37,18 +36,10 @@
   <!-- Visualization with rviz, only if arg VISUALIZE is set to true. Default is
        false, the allegro_viz.launch can be started separated. -->
   <arg name ="VISUALIZE" default="true" />
-  <include file="$(find allegro_hand_controllers)/launch/allegro_viz.launch"
+  <include file="$(find allegro_hand)/launch/allegro_viz.launch"
            if="$(arg VISUALIZE)">
     <arg name="NUM" value="$(arg NUM)"/>
   </include>
-
-  <arg name="CONTROLLER" default="grasp"/> <!-- grasp, pd, velsat  -->
-  <!-- Controllers include:
-       -grasp *
-       -pd
-       -velsat
-       -torque
-       *The default controller is 'grasp' which employs the included grasping library (libBHand). -->
 
   <arg name="POLLING" default="true"/> <!-- true, false for polling the CAN communication -->
 
@@ -71,13 +62,12 @@
   <!-- Allegro Hand controller and communication node. -->
   <node name="allegroHand_$(arg HAND)_$(arg NUM)"
         pkg="allegro_hand_controllers"
-        type="allegro_node_$(arg CONTROLLER)"
+        type="allegro_node"
         output="screen"
         clear_params="true"
         respawn="$(arg RESPAWN)"
         respawn_delay="2"
-        args="$(arg POLLING)"
-        ns="allegroHand_$(arg NUM)" >
+        args="$(arg POLLING)" >
 
     <!-- Set the CAN channel automatically (using detect_pcan.py) if the
          AUTO_CAN parameter is true, otherwise use the CAN_DEVICE
@@ -91,33 +81,4 @@
 
     <param name="/hand_info/which_hand" value="$(arg HAND)" /> <!-- See HAND arg above -->
   </node>
-
-  <!-- NOTE: The joint_state_publisher is actually commanding *desired* joint
-       angles. You can use the 'sim' controller to have a non-existent hand. -->
-  <node name="joint_states_$(arg NUM)" pkg="joint_state_publisher" type="joint_state_publisher"
-        if="$(arg JSP_GUI)">
-    <remap from="joint_states" to="allegroHand_$(arg NUM)/joint_cmd"/>
-    <param name="use_gui" value="true"/>
-  </node>
-
-  <!-- Joint States (angles) to Joint Transforms -->
-  <node name="jointState2tf_$(arg NUM)"
-        pkg="robot_state_publisher"
-        type="robot_state_publisher">
-    <remap from="tf" to="allegroHand_$(arg NUM)/tf"/>
-    <remap from="joint_states" to="allegroHand_$(arg NUM)/joint_states"/>
-  </node>
-
-  <!-- Keyboard handler (if arg KEYBOARD is true) -->
-  <node name="keyboard_$(arg NUM)"
-        pkg="allegro_hand_keyboard"
-        type="allegro_hand_keyboard"
-        output="screen"
-        if="$(arg KEYBOARD)">
-    <remap from="lib_cmd" to="allegroHand_$(arg NUM)/lib_cmd"/>
-  </node>
-
-
-
-
 </launch>
