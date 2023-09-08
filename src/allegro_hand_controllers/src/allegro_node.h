@@ -29,7 +29,7 @@ const std::string LIB_CMD_TOPIC = "lib_cmd";
 class AllegroNode {
  public:
 
-  AllegroNode(bool sim = false);
+  AllegroNode();
 
   virtual ~AllegroNode();
 
@@ -44,10 +44,6 @@ class AllegroNode {
   virtual void computeDesiredTorque() {
     ROS_ERROR("Called virtual function!");
   };
-
-  ros::Timer startTimerCallback();
-
-  void timerCallback(const ros::TimerEvent &event);
 
  protected:
 

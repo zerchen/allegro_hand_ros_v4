@@ -6,6 +6,7 @@
 #include "allegro_node.h"
 #include "allegro_hand_driver/AllegroHandDrv.h"
 
+
 std::string jointNames[DOF_JOINTS] =
         {
                 "joint_0.0", "joint_1.0", "joint_2.0", "joint_3.0",
@@ -15,9 +16,9 @@ std::string jointNames[DOF_JOINTS] =
         };
 
 
-AllegroNode::AllegroNode(bool sim /* = false */) {
+AllegroNode::AllegroNode() {
   mutex = new boost::mutex();
-  
+
   // Create arrays 16 long for each of the four joint state components
   current_joint_state.position.resize(DOF_JOINTS);
   current_joint_state.velocity.resize(DOF_JOINTS);
@@ -34,34 +35,23 @@ AllegroNode::AllegroNode(bool sim /* = false */) {
     current_velocity_filtered[i] = 0.0;
   }
 
-  
   // Get Allegro Hand information from parameter server
-  // This information is found in the Hand-specific "zero.yaml" file from the allegro_hand_description package
-  std::string robot_name, manufacturer, origin, serial;
-  double version;
-  ros::param::get("~hand_info/robot_name", robot_name);
+  std::string whichHand;
   ros::param::get("~hand_info/which_hand", whichHand);
-  ros::param::get("~hand_info/manufacturer", manufacturer);
-  ros::param::get("~hand_info/origin", origin);
-  ros::param::get("~hand_info/serial", serial);
-  ros::param::get("~hand_info/version", version);
 
   // Initialize CAN device
-  canDevice = 0;
-  if(!sim) {
-    canDevice = new allegro::AllegroHandDrv();
-    if (canDevice->init()) {
-        usleep(3000);
-    }
-    else {
-        delete canDevice;
-        canDevice = 0;
-    }
+  canDevice = new allegro::AllegroHandDrv();
+  if (canDevice->init()) {
+      usleep(3000);
+  }
+  else {
+      delete canDevice;
+      canDevice = 0;
   }
 
   // Start ROS time
   tstart = ros::Time::now();
-  
+
   // Advertise current joint state publisher and subscribe to desired joint
   // states.
   joint_state_pub = nh.advertise<sensor_msgs::JointState>(JOINT_STATE_TOPIC, 3);
@@ -147,15 +137,4 @@ void AllegroNode::updateController() {
     ROS_ERROR("Allegro Hand Node is Shutting Down! (Emergency Stop)");
     ros::shutdown();
   }
-}
-
-// Interrupt-based control is not recommended by SimLab. I have not tested it.
-void AllegroNode::timerCallback(const ros::TimerEvent &event) {
-  updateController();
-}
-
-ros::Timer AllegroNode::startTimerCallback() {
-  ros::Timer timer = nh.createTimer(ros::Duration(0.001),
-                                    &AllegroNode::timerCallback, this);
-  return timer;
 }
