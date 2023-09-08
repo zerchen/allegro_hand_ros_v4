@@ -4,7 +4,6 @@
           HAND:=right|left
        Suggested arguments:
           NUM:=0|1|...
-          ZEROS:=/path/to/zeros_file.yaml
           CONTROLLER:=grasp|pd|velsat|torque|sim
           RESPAWN:=true|false   Respawn controller if it dies.
           KEYBOARD:=true|false  (default is true)
@@ -58,11 +57,7 @@
   <arg name="AUTO_CAN" default="true" />
   <arg name="CAN_DEVICE" default="/dev/pcanusb1" />
 
-  <arg name="PARAMS_DIR" default="$(find allegro_hand_parameters)" />
   <arg name="KEYBOARD" default="true" />
-
-  <!-- yaml param files for your hand can be found in parameters/zero_files/ -->
-  <arg name="ZEROS" default="$(arg PARAMS_DIR)/zero.yaml"/>
 
   <!--If true, respawn the controller if it dies. -->
   <arg name="RESPAWN" default="false"/>

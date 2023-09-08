@@ -95,14 +95,6 @@ Packages
  * **allegro_hand_keyboard** Node that sends the commanded grasps. All commands
      are available with the grasp controller, only some are available with the
      other controllers.
- * **allegro_hand_parameters** All necessary parameters for loading the hand:
-   * gains_pd.yaml: Controller gains for PD controller.
-   * gains_velSat.yaml: Controller gains and parameters for velocity saturation
-           controller.
-   * initial_position.yaml: Home position for the hand.
-   * zero.yaml: Offset and servo directions for each of the 16 joints, and some
-           meta information about the hand.
-   * zero_files/ Zero files for all hands.
  * **bhand** Library files for the predefined grasps, available in 32 and 64 bit
      versions. 64 bit by default, update symlink for 32 bit.
 
