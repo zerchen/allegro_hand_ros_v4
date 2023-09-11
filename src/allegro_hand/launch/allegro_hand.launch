@@ -53,6 +53,9 @@
   <!--If true, respawn the controller if it dies. -->
   <arg name="RESPAWN" default="false"/>
 
+  <!--Arbitrary name for this particular hand. -->
+  <arg name="hand_name" value="allegro_hand_$(arg HAND)_$(arg NUM)"/>
+
   <!-- Load the robot description directly from the xacro file. (NOTE: store it
        in two parameter names.) -->
   <param name="robot_description"
@@ -68,7 +71,7 @@
         respawn="$(arg RESPAWN)"
         respawn_delay="2"
         args="$(arg POLLING)"
-        ns="/allegroHand_$(arg HAND)_$(arg NUM)">
+        ns="/$(arg hand_name)">
 
     <!-- Set the CAN channel automatically (using detect_pcan.py) if the
          AUTO_CAN parameter is true, otherwise use the CAN_DEVICE
@@ -84,10 +87,10 @@
   </node>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find allegro_hand_controllers)/config/controllers.yaml" command="load" ns="/allegroHand_$(arg HAND)_$(arg NUM)"/>
+  <rosparam file="$(find allegro_hand_controllers)/config/controllers.yaml" command="load" ns="/$(arg hand_name)"/>
 
    <!-- load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/allegroHand_$(arg HAND)_$(arg NUM)" args="joint_state_controller"/>
+    output="screen" ns="/$(arg hand_name)" args="joint_state_controller"/>
 
 </launch>

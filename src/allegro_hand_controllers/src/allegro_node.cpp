@@ -140,8 +140,11 @@ void AllegroNode::run() {
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "allegro_node");
+
+  // Ros spin asynchronously for controller_manager service callbacks, on 2 threads.
   ros::AsyncSpinner spinner(2);
   spinner.start();
+
   AllegroNode node;
   node.run();
   return -1;
