@@ -122,6 +122,7 @@ void AllegroNode::run() {
     AllegroHWI::READ_STATUS s = robot.read();
 
     if(s == AllegroHWI::READ_STATUS::ERROR) {
+      ROS_ERROR("Error while reading hand info, controller exiting.");
       break;
     }
 
@@ -141,6 +142,8 @@ void AllegroNode::run() {
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "allegro_node");
+  ros::AsyncSpinner spinner(2);
+  spinner.start();
   AllegroNode node;
   node.run();
   return -1;

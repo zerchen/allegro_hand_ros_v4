@@ -60,14 +60,15 @@
                   $(find allegro_hand_description)/allegro_hand_description_$(arg HAND).xacro"/>
 
   <!-- Allegro Hand controller and communication node. -->
-  <node name="allegroHand_$(arg HAND)_$(arg NUM)"
+  <node name="allegro_node"
         pkg="allegro_hand_controllers"
         type="allegro_node"
         output="screen"
         clear_params="true"
         respawn="$(arg RESPAWN)"
         respawn_delay="2"
-        args="$(arg POLLING)" >
+        args="$(arg POLLING)"
+        ns="/allegroHand_$(arg HAND)_$(arg NUM)">
 
     <!-- Set the CAN channel automatically (using detect_pcan.py) if the
          AUTO_CAN parameter is true, otherwise use the CAN_DEVICE
@@ -81,4 +82,12 @@
 
     <param name="/hand_info/which_hand" value="$(arg HAND)" /> <!-- See HAND arg above -->
   </node>
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find allegro_hand_controllers)/config/controllers.yaml" command="load" ns="/allegroHand_$(arg HAND)_$(arg NUM)"/>
+
+   <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/allegroHand_$(arg HAND)_$(arg NUM)" args="joint_state_controller"/>
+
 </launch>
