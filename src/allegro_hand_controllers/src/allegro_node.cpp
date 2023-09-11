@@ -27,8 +27,6 @@ AllegroHWI::AllegroHWI() {
   for (int i = 0; i < DOF_JOINTS; i++) {
     desired_torque[i] = 0.0;
     current_velocity[i] = 0.0;
-    current_position_filtered[i] = 0.0;
-    current_velocity_filtered[i] = 0.0;
   }
 
   // Initialize CAN device
@@ -48,7 +46,7 @@ AllegroHWI::AllegroHWI() {
 
   // connect and register the joint state interface
   for (int i = 0; i < DOF_JOINTS; i++) {
-    const hardware_interface::JointStateHandle state_handle(jointNames[i], &current_position_filtered[i], &current_velocity_filtered[i], &desired_torque[i]);
+    const hardware_interface::JointStateHandle state_handle(jointNames[i], &current_position[i], &current_velocity[i], &desired_torque[i]);
     jnt_state_interface.registerHandle(state_handle);
   }
 

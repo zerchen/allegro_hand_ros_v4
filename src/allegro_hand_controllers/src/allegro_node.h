@@ -31,11 +31,7 @@ class AllegroHWI : public hardware_interface::RobotHW {
 
  protected:
   double current_position[DOF_JOINTS] = {0.0};
-  double current_position_filtered[DOF_JOINTS] = {0.0};
-
   double current_velocity[DOF_JOINTS] = {0.0};
-  double current_velocity_filtered[DOF_JOINTS] = {0.0};
-
   double desired_torque[DOF_JOINTS] = {0.0};
 
   // CAN device
