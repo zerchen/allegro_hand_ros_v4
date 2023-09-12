@@ -14,10 +14,10 @@ static inline std::string &rtrim(std::string &s)
 
 std::string jointNames[DOF_JOINTS] =
         {
-                "joint_0.0", "joint_1.0", "joint_2.0", "joint_3.0",
-                "joint_4.0", "joint_5.0", "joint_6.0", "joint_7.0",
-                "joint_8.0", "joint_9.0", "joint_10.0", "joint_11.0",
-                "joint_12.0", "joint_13.0", "joint_14.0", "joint_15.0"
+                "joint_0", "joint_1", "joint_2", "joint_3",
+                "joint_4", "joint_5", "joint_6", "joint_7",
+                "joint_8", "joint_9", "joint_10", "joint_11",
+                "joint_12", "joint_13", "joint_14", "joint_15"
         };
 
 
@@ -54,7 +54,7 @@ AllegroHWI::AllegroHWI() {
 
   // connect and register the joint effort interface
   for (int i = 0; i < DOF_JOINTS; i++) {
-    const hardware_interface::JointHandle eff_handle(jnt_state_interface.getHandle(jointNames[i]), &desired_torque[0]);
+    const hardware_interface::JointHandle eff_handle(jnt_state_interface.getHandle(jointNames[i]), &desired_torque[i]);
     jnt_eff_interface.registerHandle(eff_handle);
   }
 

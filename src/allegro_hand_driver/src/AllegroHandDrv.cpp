@@ -220,9 +220,6 @@ void AllegroHandDrv::_writeDevices()
     double pwmDouble[DOF_JOINTS];
     short pwm[DOF_JOINTS];
 
-    if (!isJointInfoReady())
-        return;
-
     // convert to torque to pwm
     for (int i = 0; i < DOF_JOINTS; i++) {
         pwmDouble[i] = _desired_torque[i] * _tau_cov_const;
@@ -240,7 +237,7 @@ void AllegroHandDrv::_writeDevices()
 
     for (int findex = 0; findex < 4; findex++) {
         CANAPI::command_set_torque(_can_handle, findex, &pwm[findex*4]);
-        //ROS_INFO("write torque %d: %d %d %d %d", findex, pwm[findex*4+0], pwm[findex*4+1], pwm[findex*4+2], pwm[findex*4+3]);
+        // ROS_INFO("write torque %d: %d %d %d %d", findex, pwm[findex*4+0], pwm[findex*4+1], pwm[findex*4+2], pwm[findex*4+3]);
     }
 }
 
