@@ -54,7 +54,6 @@ Optional (recommended) arguments:
           ZEROS:=/path/to/zeros_file.yaml
           CONTROLLER:=grasp|pd|velsat|torque|sim
           RESPAWN:=true|false   Respawn controller if it dies.
-          KEYBOARD:=true|false  (default is true)
           AUTO_CAN:=true|false  (default is true)
           CAN_DEVICE:=/dev/pcanusb1 | /dev/pcanusbNNN  (ls -l /dev/pcan* to see open CAN devices)
           VISUALIZE:=true|false  (Launch rviz)
@@ -92,9 +91,6 @@ Packages
    * sim: Just pass desired joint states through as current joint states.
  * **allegro_hand_description** xacro descriptions for the kinematics of the
      hand, rviz configuration and meshes.
- * **allegro_hand_keyboard** Node that sends the commanded grasps. All commands
-     are available with the grasp controller, only some are available with the
-     other controllers.
  * **bhand** Library files for the predefined grasps, available in 32 and 64 bit
      versions. 64 bit by default, update symlink for 32 bit.
 

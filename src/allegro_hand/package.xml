@@ -13,7 +13,6 @@
 
     <run_depend>joint_state_publisher</run_depend>
     <run_depend>robot_state_publisher</run_depend>
-    <run_depend>allegro_hand_keyboard</run_depend>
     <run_depend>allegro_hand_controllers</run_depend>
 
     <!-- The export tag contains other, unspecified, tags -->

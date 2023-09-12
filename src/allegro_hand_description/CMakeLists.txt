@@ -23,6 +23,3 @@ install(DIRECTORY .
   PATTERN "*.world"
   PATTERN "*.STL"
 )
-
-catkin_install_python(PROGRAMS scripts/detect_pcan.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
