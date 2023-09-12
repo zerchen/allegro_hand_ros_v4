@@ -48,43 +48,44 @@
 #include <list>
 #include <string>
 #include "AllegroHandDef.h"
+#include "FilteredDerivative.h"
 
 namespace allegro
 {
 
 class AllegroHandDrv
 {
+
+using JointFilt = FilteredDerivative<uint64_t, double>;
+
 public:
     AllegroHandDrv();
     ~AllegroHandDrv();
 
-    bool init(std::string can_ch);                ///< initialize Allegro Hand driver and CAN channel
+    bool init(std::string can_ch);  ///< initialize Allegro Hand driver and CAN channel
 
-    void setTorque(double *torque);         ///< set desired joint torque
-    void getJointInfo(double *position, double *velocity);    ///< get current joint position
+    void setTorque(double *torque);                        ///< set desired joint torque
+    void getJointInfo(double *position, double *velocity); ///< get current joint position
 
-    bool emergencyStop() { return _emergency_stop; }        ///< whether emergency is activated
-    double torqueConversion() { return _tau_cov_const; }    ///< get torque conversion constant
-    double inputVoltage() { return _input_voltage; }        ///< get input voltage of this system
+    bool emergencyStop() { return _emergency_stop; }     ///< whether emergency is activated
+    double torqueConversion() { return _tau_cov_const; } ///< get torque conversion constant
+    double inputVoltage() { return _input_voltage; }     ///< get input voltage of this system
 
-    int readCANFrames();                    ///< try to read CAN frames (user code should call this fast enough)
-    int writeJointTorque();                 ///< send joint command via CAN comm
-    bool isJointInfoReady();                ///< return whether all joint positions are updated
-    void resetJointInfoReady();             ///< reset joint position update flag
+    int readCANFrames();        ///< try to read CAN frames (user code should call this fast enough)
+    int writeJointTorque();     ///< send joint command via CAN comm
+    bool isJointInfoReady();    ///< return whether all joint positions are updated
+    void resetJointInfoReady(); ///< reset joint position update flag
 
 private:
-    void* _can_handle;                      ///< CAN device(driver) handle
+    void* _can_handle; ///< CAN device(driver) handle
 
-    double _curr_position[DOF_JOINTS];      ///< current joint position (radian)
-    double _curr_velocity[DOF_JOINTS];      ///< current joint position (radian)
-    uint64_t _timestamp_position[DOF_JOINTS];///< Date at which the last position was received (µsec)
-    double _curr_torque[DOF_JOINTS];        ///< current joint torque (Nm)
-    double _desired_position[DOF_JOINTS];   ///< desired joint position (radian)
-    double _desired_torque[DOF_JOINTS];     ///< desired joint torque (Nm)
+    JointFilt _curr_joint_values[DOF_JOINTS]; ///< Structure holding current joint values : position (rad), velocities (rad/s) and filter them.
+    double _desired_position[DOF_JOINTS];     ///< desired joint position (radian)
+    double _desired_torque[DOF_JOINTS];       ///< desired joint torque (Nm)
 
-    double _hand_version;                   ///< hand version
-    double _tau_cov_const;                  ///< constant to convert joint torque to pwm command
-    double _input_voltage;                  ///< input voltage
+    double _hand_version;  ///< hand version
+    double _tau_cov_const; ///< constant to convert joint torque to pwm command
+    double _input_voltage; ///< input voltage
 
     int _curr_position_get;                 ///< bit flag telling which joint positions are updated (0x01:index 0x02:middle 0x04:pinky 0x08:thumb)
 
@@ -99,8 +100,7 @@ private:
 private:
     void _readDevices();                    ///< read CAN messages
     void _writeDevices();                   ///< write CAN messages(torque command)
-    //void _parseMessage(char cmd, char src, char des, int len, unsigned char* data); ///< parse CAN messages and calculate current joint angles from encoder values
-    void _parseMessage(uint64_t timestamp_us, int id, int len, unsigned char* data);
+    void _parseMessage(uint64_t timestamp_us, int id, int len, unsigned char* data); ///< parse CAN messages and calculate current joint angles from encoder values
 };
 
 }

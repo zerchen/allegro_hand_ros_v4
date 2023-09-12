@@ -68,6 +68,7 @@ using namespace std;
 #define PWM_LIMIT_GLOBAL_24V 500.0
 #define PWM_LIMIT_GLOBAL_12V 1200.0
 
+#define FILTER_TIME_CONSTANT_US 15e3 // Filter smooth on ~15ms
 
 namespace allegro
 {
@@ -77,6 +78,9 @@ AllegroHandDrv::AllegroHandDrv()
     , _curr_position_get(0)
     , _emergency_stop(false)
 {
+    for(int i=0;i<DOF_JOINTS;i++) {
+        _curr_joint_values[i].set_time_constant(FILTER_TIME_CONSTANT_US);
+    }
     ROS_INFO("AllegroHandDrv instance is constructed.");
 }
 
@@ -194,8 +198,8 @@ void AllegroHandDrv::setTorque(double *torque)
 void AllegroHandDrv::getJointInfo(double *position, double *velocity)
 {
     for (int i = 0; i < DOF_JOINTS; i++) {
-        position[i] = _curr_position[i];
-        velocity[i] = _curr_velocity[i];
+        position[i] = _curr_joint_values[i].get_value_filtered();
+        velocity[i] = 1e6 * _curr_joint_values[i].get_derivative_filtered(); // 1e6 * to correct for us timestamps.
     }
 }
 
@@ -312,19 +316,13 @@ void AllegroHandDrv::_parseMessage(uint64_t timestamp_us, int id, int len, unsig
                 const int kindex = lIndexBase + k; // current knuckle index
 
                 // Get raw position
-                const int raw_pos = (short) (data[k*2] | (data[(k*2)+1] << 8));
+                const int _pos_fixed_point = (short) (data[k*2] | (data[(k*2)+1] << 8));
 
                 // Compute the actual position in radian
-                const double tmp_pos = (double) raw_pos * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-
-                // Compute the velocity
-                if(timestamp_us != _timestamp_position[kindex]) { // Check for zero devision
-                    _curr_velocity[kindex] = 1e6 * (tmp_pos - _curr_position[kindex]) / (timestamp_us - _timestamp_position[kindex]);
-                }
+                const double _pos_floating_point = (double) _pos_fixed_point * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
 
                 // Update stored values
-                _curr_position[kindex] = tmp_pos;
-                _timestamp_position[kindex] = timestamp_us;
+                _curr_joint_values[kindex].new_point(timestamp_us, _pos_floating_point);
             }
 
             _curr_position_get |= (0x01 << (findex));
