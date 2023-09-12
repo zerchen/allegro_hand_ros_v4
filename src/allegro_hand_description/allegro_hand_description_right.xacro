@@ -112,7 +112,7 @@
             </inertial>
         </link>
 
-        <joint name="joint_${finger_num*4+0}.0" type="revolute">
+        <joint name="joint_${finger_num*4+0}" type="revolute">
             <axis xyz="-1 0 0"/>
             <limit effort="15" velocity="7"
                    lower="${limit_0_t_low-joint_safety_margin}"
@@ -151,7 +151,7 @@
             </inertial>
         </link>
 
-        <joint name="joint_${finger_num*4+1}.0" type="revolute">
+        <joint name="joint_${finger_num*4+1}" type="revolute">
             <axis xyz="0 0 1"/>
             <limit effort="15" velocity="7"
                    lower="${limit_1_t_low+joint_safety_margin}"
@@ -187,7 +187,7 @@
             </inertial>
         </link>
 
-        <joint name="joint_${finger_num*4+2}.0" type="revolute">
+        <joint name="joint_${finger_num*4+2}" type="revolute">
             <axis xyz="0 1 0"/>
             <limit effort="15" velocity="7"
                    lower="${limit_2_t_low+joint_safety_margin}"
@@ -224,7 +224,7 @@
             </inertial>
         </link>
 
-        <joint name="joint_${finger_num*4+3}.0" type="revolute">
+        <joint name="joint_${finger_num*4+3}" type="revolute">
             <axis xyz="0 1 0"/>
             <limit effort="15" velocity="7"
                    lower="${limit_3_t_low+joint_safety_margin}"
@@ -299,7 +299,7 @@
             </inertial>
         </link>
 
-        <joint name="joint_${finger_num*4+0}.0" type="revolute">
+        <joint name="joint_${finger_num*4+0}" type="revolute">
             <axis xyz="0 0 1"/>
             <limit effort="15" velocity="7"
                    lower="${limit_0_low+joint_safety_margin}"
@@ -335,7 +335,7 @@
             </inertial>
         </link>
 
-        <joint name="joint_${finger_num*4+1}.0" type="revolute">
+        <joint name="joint_${finger_num*4+1}" type="revolute">
             <limit effort="15" velocity="7"
                    lower="${limit_1_low+joint_safety_margin}"
                    upper="${limit_1_up-joint_safety_margin}"/>
@@ -371,7 +371,7 @@
             </inertial>
         </link>
 
-        <joint name="joint_${finger_num*4+2}.0" type="revolute">
+        <joint name="joint_${finger_num*4+2}" type="revolute">
             <axis xyz="0 1 0"/>
             <limit effort="15" velocity="7"
                    lower="${limit_2_low+joint_safety_margin}"
@@ -407,7 +407,7 @@
             </inertial>
         </link>
 
-        <joint name="joint_${finger_num*4+3}.0" type="revolute">
+        <joint name="joint_${finger_num*4+3}" type="revolute">
             <axis xyz="0 1 0"/>
             <limit effort="15" velocity="7"
                    lower="${limit_3_low+joint_safety_margin}"
