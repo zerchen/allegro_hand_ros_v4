@@ -115,7 +115,7 @@ AllegroNode::AllegroNode()
 }
 
 void AllegroNode::run() {
-  while (true)
+  while (ros::ok())
   {
     AllegroHWI::READ_STATUS s = robot.read();
 
