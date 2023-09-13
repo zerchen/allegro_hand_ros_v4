@@ -56,7 +56,7 @@
     <link name="palm_link">
         <visual>
             <geometry>
-                <mesh filename="package://allegro_hand_description/meshes/base_link.STL"/>
+                <mesh filename="package://allegro_hand_description/meshes/base_link_right.STL"/>
             </geometry>
             <origin rpy="0 0 0" xyz="0 0 0 "/>
             <material name="black">
@@ -93,7 +93,7 @@
                 <material name="black">
                     <color rgba=".2 .2 .2 1"/>
                 </material>
-                <origin rpy="${DEG2RAD} 0 0" xyz="0 0 0"/>
+                <origin rpy="0 0 0" xyz="0 0 0"/>
             </visual>
 
             <collision>

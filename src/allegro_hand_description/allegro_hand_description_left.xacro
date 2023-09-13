@@ -14,8 +14,8 @@
     <xacro:property name="link2_z" value="0.0384"/>
 
     <!-- full height from joint to tip. when used,
-         the radius of the finger tip sphere will be subtracted
-         and one fixed link will be added for the tip. -->
+    the radius of the finger tip sphere will be subtracted
+    and one fixed link will be added for the tip. -->
     <xacro:property name="link3_z" value="0.0387"/>
     <xacro:property name="fingerTip_r" value="0.0120"/>
     <xacro:property name="offset_origin_x_const" value="0"/>
@@ -58,7 +58,7 @@
             <geometry>
                 <mesh filename="package://allegro_hand_description/meshes/base_link_left.STL"/>
             </geometry>
-            <origin rpy="${-90*DEG2RAD} 0 0" xyz="0 0 0 "/>
+            <origin rpy="0 0 0" xyz="0 0 0 "/>
             <material name="black">
                 <color rgba="0.2 0.2 0.2 1"/>
             </material>
@@ -100,8 +100,7 @@
                 <geometry>
                     <box size="${link0_t_x} ${link0_t_y} ${link0_t_z}"/>
                 </geometry>
-                <origin rpy="0 0 0"
-                        xyz="${-0.0358/2+0.0} ${-.018/2} ${.029/2}"/>
+                <origin rpy="0 0 0" xyz="${-0.0358/2+0.0} ${-.018/2} ${.029/2}"/>
             </collision>
 
             <inertial>
@@ -242,7 +241,6 @@
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_15.0_tip.STL"/>
                 </geometry>
-
                 <material name="white">
                     <color rgba=".9 .9 .9 1"/>
                 </material>
