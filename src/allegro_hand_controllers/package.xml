@@ -13,16 +13,14 @@
 
     <build_depend>allegro_hand_driver</build_depend>
     <build_depend>libpcan</build_depend>
+    <build_depend>hardware_interface</build_depend>
+    <build_depend>controller_manager</build_depend>
     <build_depend>roscpp</build_depend>
-    <build_depend>sensor_msgs</build_depend>
-    <run_depend>allegro_hand_description</run_depend>
     <run_depend>allegro_hand_driver</run_depend>
-    <run_depend>joint_state_publisher</run_depend>
     <run_depend>libpcan</run_depend>
-    <run_depend>robot_state_publisher</run_depend>
     <run_depend>roscpp</run_depend>
-    <run_depend>sensor_msgs</run_depend>
-    <run_depend>xacro</run_depend>
+    <run_depend>hardware_interface</run_depend>
+    <run_depend>controller_manager</run_depend>
 
     <!-- The export tag contains other, unspecified, tags -->
     <export>
