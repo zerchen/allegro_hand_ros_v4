@@ -4,8 +4,7 @@
     <version>0.0.0</version>
     <description>Allegro hand models.</description>
 
-    <!-- One maintainer tag required, multiple allowed, one person per tag -->
-    <maintainer email="felix.duvallet@epfl.ch">Felix Duvallet</maintainer>
+    <maintainer email="etienne.arlaud@inria.fr">EtienneAr</maintainer>
 
     <buildtool_depend>catkin</buildtool_depend>
 

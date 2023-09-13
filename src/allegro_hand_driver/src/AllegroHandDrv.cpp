@@ -2,6 +2,7 @@
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2016, Wonik Robotics.
+ *  Copyright (c) 2023, INRIA.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -30,16 +31,6 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
- */
-
-/*
- *  @file AllegroHandDrv.cpp
- *  @brief Allegro Hand Driver
- *
- *  Created on:         Nov 15, 2012
- *  Added to Project:   Jan 17, 2013
- *  Author:             Sean Yi, K.C.Chang, Seungsu Kim, & Alex Alspach
- *  Maintained by:      Sean Yi(seanyi@wonikrobotics.com)
  */
 
 #include <iostream>
