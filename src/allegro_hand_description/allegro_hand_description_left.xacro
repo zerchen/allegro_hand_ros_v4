@@ -1,5 +1,18 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="allegro_hand_left">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="allegro_hand">
+
+    <xacro:arg name="chirality" default=""/>
+
+    <!-- ======================== CHIRALITY PARAMS ========================= -->
+    <xacro:property name="suffix" value="$(arg chirality)"/>
+    <xacro:property name="minus_left"  value="${-1 if suffix == 'left' else  1}"/>
+    <xacro:property name="minus_right" value="${-1 if suffix == 'right' else  1}"/>
+    <xacro:property name="zero_left"   value="${0 if suffix == 'left' else 1}"/>
+    <xacro:property name="zero_right"  value="${0 if suffix == 'right' else 1}"/>
+
+    <xacro:if value="${minus_right * minus_left != -1}">
+	INVALID CHIRALITY, MUST BE "LEFT" OR "RIGHT"
+    </xacro:if>
 
     <xacro:property name="DEG2RAD" value="0.01745329251"/>
 
@@ -56,7 +69,7 @@
     <link name="palm_link">
         <visual>
             <geometry>
-                <mesh filename="package://allegro_hand_description/meshes/base_link_left.STL"/>
+                <mesh filename="package://allegro_hand_description/meshes/base_link_${suffix}.STL"/>
             </geometry>
             <origin rpy="0 0 0" xyz="0 0 0 "/>
             <material name="black">
@@ -81,26 +94,26 @@
     </link>
 
     <!-- THUMB MACRO -->
-    <xacro:macro name="thumb_left"
+    <xacro:macro name="thumb"
                  params="finger_num offset_origin_x offset_origin_y offset_origin_z finger_angle_r finger_angle_p finger_angle_y">
 
         <!-- [LINK 12] -->
         <link name="link_${finger_num*4+0}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_12.0_left.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/link_12.0_${suffix}.STL"/>
                 </geometry>
                 <material name="black">
                     <color rgba=".2 .2 .2 1"/>
                 </material>
-                <origin rpy="${180*DEG2RAD} 0 0" xyz="0 0 0"/>
+                <origin rpy="${zero_right * 180*DEG2RAD} 0 0" xyz="0 0 0"/>
             </visual>
 
             <collision>
                 <geometry>
                     <box size="${link0_t_x} ${link0_t_y} ${link0_t_z}"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="${-0.0358/2+0.0} ${-.018/2} ${.029/2}"/>
+                <origin rpy="0 0 0" xyz="${-0.0358/2+0.0} ${minus_left * 0.018/2} ${.029/2}"/>
             </collision>
 
             <inertial>
@@ -113,7 +126,7 @@
         </link>
 
         <joint name="joint_${finger_num*4+0}" type="revolute">
-            <axis xyz="+1 0 0"/>
+            <axis xyz="${minus_right} 0 0"/>
             <limit effort="15" velocity="7"
                    lower="${limit_0_t_low-joint_safety_margin}"
                    upper="${limit_0_t_up-joint_safety_margin}"/>
@@ -152,14 +165,14 @@
         </link>
 
         <joint name="joint_${finger_num*4+1}" type="revolute">
-            <axis xyz="0 0 -1"/>
+            <axis xyz="0 0 ${minus_left}"/>
             <limit effort="15" velocity="7"
                    lower="${limit_1_t_low+joint_safety_margin}"
                    upper="${limit_1_t_up-joint_safety_margin}"/>
             <parent link="link_${finger_num*4+0}"/>
             <child link="link_${finger_num*4+1}"/>
-            <origin xyz="-0.027 -0.005 0.0399"/>
-			<dynamics damping="3" friction="5"/>
+            <origin xyz="-0.027 ${minus_left * 0.005} 0.0399"/>
+            <dynamics damping="3" friction="5"/>
         </joint>
 
         <!-- [LINK 14] -->
@@ -478,7 +491,7 @@
             finger_angle_r="${5.0*DEG2RAD}"
             />
     <!-- THUMB -->
-    <xacro:thumb_left
+    <xacro:thumb
             finger_num="3"
             offset_origin_x="-0.0182"
             offset_origin_y="-0.019333"
