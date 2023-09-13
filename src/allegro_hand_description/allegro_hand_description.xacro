@@ -2,6 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="allegro_hand">
 
     <xacro:arg name="chirality" default=""/>
+    <xacro:arg name="gz_plugin_namespace" default=""/>
 
     <!-- ======================== CHIRALITY PARAMS ========================= -->
     <xacro:property name="suffix" value="$(arg chirality)"/>
@@ -501,5 +502,49 @@
             finger_angle_y="${minus_right * 90*DEG2RAD}"
             />
 
-    <!-- ============================================================================= -->
+    <!-- ============================= GAZEBO SIMULATION ============================= -->
+
+    <link name="world"/>
+    <joint name="root_joint" type="fixed">
+                <parent link="world"/>
+                <child link="palm_link"/>
+                <origin rpy="0 0 0" xyz="0 0 0.15"/>
+    </joint>
+
+    <xacro:macro name="make_transmission" params="joint_num">
+        <transmission name="joint_${'%02d' % joint_num}_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="joint_${'%02d' % joint_num}">
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </joint>
+        <actuator name="joint_${'%02d' % joint_num}_motor">
+            <mechanicalReduction>1</mechanicalReduction>
+            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+        </actuator>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:make_transmission joint_num="00"/>
+    <xacro:make_transmission joint_num="01"/>
+    <xacro:make_transmission joint_num="02"/>
+    <xacro:make_transmission joint_num="03"/>
+    <xacro:make_transmission joint_num="04"/>
+    <xacro:make_transmission joint_num="05"/>
+    <xacro:make_transmission joint_num="06"/>
+    <xacro:make_transmission joint_num="07"/>
+    <xacro:make_transmission joint_num="08"/>
+    <xacro:make_transmission joint_num="09"/>
+    <xacro:make_transmission joint_num="10"/>
+    <xacro:make_transmission joint_num="11"/>
+    <xacro:make_transmission joint_num="12"/>
+    <xacro:make_transmission joint_num="13"/>
+    <xacro:make_transmission joint_num="14"/>
+    <xacro:make_transmission joint_num="15"/>
+
+    <gazebo>
+      <plugin name="ros_control" filename="libgazebo_ros_control.so">
+        <robotNamespace>/$(arg gz_plugin_namespace)</robotNamespace>
+        <legacyModeNS>true</legacyModeNS>
+      </plugin>
+    </gazebo>
 </robot>

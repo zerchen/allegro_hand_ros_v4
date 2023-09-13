@@ -8,7 +8,7 @@
           AUTO_CAN:=true|false  (if true, ignores CAN_DEVICE argument and finds the can device automagically).
           CAN_DEVICE:=/dev/pcanusb1 | /dev/pcanusbNNN  (ls -l /dev/pcan* to see open CAN devices)
           VISUALIZE:=true|false  (Launch rviz)
-          GAZEBO:=true|false  (NOTE: Gazebo support is highly experimental at this point)
+          GAZEBO:=true|false
 
        NOTE: If you specify the can device manually (CAN_DEVICE:=/dev/pcanusbN),
              make sure you *also* specify AUTO_CAN:=false.
@@ -48,10 +48,12 @@
   <param name="robot_description"
          command="$(find xacro)/xacro
                   $(find allegro_hand_description)/allegro_hand_description.xacro
-                  chirality:=$(arg HAND)"/>
+                  chirality:=$(arg HAND)
+                  gz_plugin_namespace:=$(arg hand_name)"/>
 
   <!-- Allegro Hand controller and communication node. -->
-  <node name="allegro_node"
+  <node unless="$(arg GAZEBO)"
+        name="allegro_node"
         pkg="allegro_hand_controllers"
         type="allegro_node"
         output="screen"
@@ -73,6 +75,18 @@
 
     <param name="/hand_info/which_hand" value="$(arg HAND)" /> <!-- See HAND arg above -->
   </node>
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include if="$(arg GAZEBO)" file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find allegro_hand_description)/worlds/allegro.world"/>
+    <arg name="debug" value="false" />
+    <arg name="paused" value="true"/>
+    <arg name="physics" value="dart"/>
+  </include>
+
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+  <node if="$(arg GAZEBO)" name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+  args="-urdf -model $(arg hand_name) -param robot_description"/>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find allegro_hand_controllers)/config/controllers.yaml" command="load" ns="/$(arg hand_name)"/>
