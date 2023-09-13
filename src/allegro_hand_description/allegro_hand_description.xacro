@@ -135,7 +135,7 @@
             <child link="link_${'%02d' % (finger_num*4+0)}"/>
             <origin rpy="${finger_angle_r} ${finger_angle_p} ${finger_angle_y}"
                     xyz="${offset_origin_x} ${offset_origin_y} ${offset_origin_z}"/>
-            <dynamics damping="0.01" friction="0.01"/>
+            <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 13] -->
@@ -173,7 +173,7 @@
             <parent link="link_${'%02d' % (finger_num*4+0)}"/>
             <child link="link_${'%02d' % (finger_num*4+1)}"/>
             <origin xyz="-0.027 ${minus_left * 0.005} 0.0399"/>
-            <dynamics damping="0.01" friction="0.01"/>
+            <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 14] -->
@@ -209,7 +209,7 @@
             <parent link="link_${'%02d' % (finger_num*4+1)}"/>
             <child link="link_${'%02d' % (finger_num*4+2)}"/>
             <origin xyz="0 0 ${link1_t_z}"/>
-            <dynamics damping="0.01" friction="0.01"/>
+            <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 15] -->
@@ -246,7 +246,7 @@
             <parent link="link_${'%02d' % (finger_num*4+2)}"/>
             <child link="link_${'%02d' % (finger_num*4+3)}"/>
             <origin xyz="0 0 ${link2_t_z}"/>
-            <dynamics damping="0.01" friction="0.01"/>
+            <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [FINGER TIP] -->
@@ -322,7 +322,7 @@
             <child link="link_${'%02d' % (finger_num*4+0)}"/>
             <origin rpy="${finger_angle_r} 0 0"
                     xyz="${offset_origin_x} ${offset_origin_y} ${offset_origin_z}"/>
-            <dynamics damping="0.01" friction="0.01"/>
+            <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 1, 5, 9] -->
@@ -357,7 +357,7 @@
             <parent link="link_${'%02d' % (finger_num*4+0)}"/>
             <child link="link_${'%02d' % (finger_num*4+1)}"/>
             <origin xyz="0 0 ${link0_z}"/>
-            <dynamics damping="0.01" friction="0.01"/>
+            <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 2, 6, 10]-->
@@ -393,7 +393,7 @@
             <parent link="link_${'%02d' % (finger_num*4+1)}"/>
             <child link="link_${'%02d' % (finger_num*4+2)}"/>
             <origin xyz="0 0 ${link1_z}"/>
-            <dynamics damping="0.01" friction="0.01"/>
+            <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 3, 7, 11] -->
@@ -429,7 +429,7 @@
             <parent link="link_${'%02d' % (finger_num*4+2)}"/>
             <child link="link_${'%02d' % (finger_num*4+3)}"/>
             <origin xyz="0 0 ${link2_z}"/>
-            <dynamics damping="0.01" friction="0.01"/>
+            <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [FINGER TIP] -->
