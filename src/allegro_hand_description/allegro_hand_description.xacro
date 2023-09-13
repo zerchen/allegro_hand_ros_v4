@@ -470,7 +470,7 @@
     <!-- RIGHT HAND due to which finger is number 0 -->
     <!-- for LEFT HAND switch the sign of the **offset_origin_y** and **finger_angle_r** parameters-->
     <xacro:finger
-            finger_num="2"
+            finger_num="${zero_right * 2}"
             offset_origin_x="${offset_origin_x_const}"
             offset_origin_y="${offset_origin_y_const}"
             offset_origin_z="${offset_origin_z_const}"
@@ -484,7 +484,7 @@
             finger_angle_r="0.0"
             />
     <xacro:finger
-            finger_num="0"
+            finger_num="${zero_left * 2}"
             offset_origin_x="${offset_origin_x_const}"
             offset_origin_y="-${offset_origin_y_const}"
             offset_origin_z="${offset_origin_z_const}"
@@ -494,11 +494,11 @@
     <xacro:thumb
             finger_num="3"
             offset_origin_x="-0.0182"
-            offset_origin_y="-0.019333"
+            offset_origin_y="${minus_left * 0.019333}"
             offset_origin_z="-0.045987"
             finger_angle_r="0"
             finger_angle_p="-${95*DEG2RAD}"
-            finger_angle_y="${90*DEG2RAD}"
+            finger_angle_y="${minus_right * 90*DEG2RAD}"
             />
 
     <!-- ============================================================================= -->

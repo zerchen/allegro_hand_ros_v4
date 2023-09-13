@@ -47,7 +47,7 @@
        in two parameter names.) -->
   <param name="robot_description"
          command="$(find xacro)/xacro
-                  $(find allegro_hand_description)/allegro_hand_description_$(arg HAND).xacro
+                  $(find allegro_hand_description)/allegro_hand_description.xacro
                   chirality:=$(arg HAND)"/>
 
   <!-- Allegro Hand controller and communication node. -->
