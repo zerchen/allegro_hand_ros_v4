@@ -127,14 +127,14 @@
 
         <joint name="joint_${'%02d' % (finger_num*4+0)}" type="revolute">
             <axis xyz="${minus_right} 0 0"/>
-            <limit effort="15" velocity="7"
-                   lower="${limit_0_t_low-joint_safety_margin}"
+            <limit effort="0.71" velocity="0.12"
+                   lower="${limit_0_t_low+joint_safety_margin}"
                    upper="${limit_0_t_up-joint_safety_margin}"/>
             <parent link="palm_link"/>
             <child link="link_${'%02d' % (finger_num*4+0)}"/>
             <origin rpy="${finger_angle_r} ${finger_angle_p} ${finger_angle_y}"
                     xyz="${offset_origin_x} ${offset_origin_y} ${offset_origin_z}"/>
-            <dynamics damping="3" friction="10"/>
+            <dynamics damping="0.01" friction="0.01"/>
         </joint>
 
         <!-- [LINK 13] -->
@@ -166,13 +166,13 @@
 
         <joint name="joint_${'%02d' % (finger_num*4+1)}" type="revolute">
             <axis xyz="0 0 ${minus_left}"/>
-            <limit effort="15" velocity="7"
+            <limit effort="0.71" velocity="0.12"
                    lower="${limit_1_t_low+joint_safety_margin}"
                    upper="${limit_1_t_up-joint_safety_margin}"/>
             <parent link="link_${'%02d' % (finger_num*4+0)}"/>
             <child link="link_${'%02d' % (finger_num*4+1)}"/>
             <origin xyz="-0.027 ${minus_left * 0.005} 0.0399"/>
-            <dynamics damping="3" friction="5"/>
+            <dynamics damping="0.01" friction="0.01"/>
         </joint>
 
         <!-- [LINK 14] -->
@@ -202,13 +202,13 @@
 
         <joint name="joint_${'%02d' % (finger_num*4+2)}" type="revolute">
             <axis xyz="0 1 0"/>
-            <limit effort="15" velocity="7"
+            <limit effort="0.71" velocity="0.12"
                    lower="${limit_2_t_low+joint_safety_margin}"
                    upper="${limit_2_t_up-joint_safety_margin}"/>
             <parent link="link_${'%02d' % (finger_num*4+1)}"/>
             <child link="link_${'%02d' % (finger_num*4+2)}"/>
             <origin xyz="0 0 ${link1_t_z}"/>
-            <dynamics damping="3" friction="10"/>
+            <dynamics damping="0.01" friction="0.01"/>
         </joint>
 
         <!-- [LINK 15] -->
@@ -239,13 +239,13 @@
 
         <joint name="joint_${'%02d' % (finger_num*4+3)}" type="revolute">
             <axis xyz="0 1 0"/>
-            <limit effort="15" velocity="7"
+            <limit effort="0.71" velocity="0.12"
                    lower="${limit_3_t_low+joint_safety_margin}"
                    upper="${limit_3_t_up-joint_safety_margin}"/>
             <parent link="link_${'%02d' % (finger_num*4+2)}"/>
             <child link="link_${'%02d' % (finger_num*4+3)}"/>
             <origin xyz="0 0 ${link2_t_z}"/>
-            <dynamics damping="3" friction="12"/>
+            <dynamics damping="0.01" friction="0.01"/>
         </joint>
 
         <!-- [FINGER TIP] -->
@@ -314,14 +314,14 @@
 
         <joint name="joint_${'%02d' % (finger_num*4+0)}" type="revolute">
             <axis xyz="0 0 1"/>
-            <limit effort="15" velocity="7"
+            <limit effort="0.71" velocity="0.12"
                    lower="${limit_0_low+joint_safety_margin}"
                    upper="${limit_0_up-joint_safety_margin}"/>
             <parent link="palm_link"/>
             <child link="link_${'%02d' % (finger_num*4+0)}"/>
             <origin rpy="${finger_angle_r} 0 0"
                     xyz="${offset_origin_x} ${offset_origin_y} ${offset_origin_z}"/>
-            <dynamics damping="3" friction="10"/>
+            <dynamics damping="0.01" friction="0.01"/>
         </joint>
 
         <!-- [LINK 1, 5, 9] -->
@@ -349,14 +349,14 @@
         </link>
 
         <joint name="joint_${'%02d' % (finger_num*4+1)}" type="revolute">
-            <limit effort="15" velocity="7"
+            <limit effort="0.71" velocity="0.12"
                    lower="${limit_1_low+joint_safety_margin}"
                    upper="${limit_1_up-joint_safety_margin}"/>
             <axis xyz="0 1 0"/>
             <parent link="link_${'%02d' % (finger_num*4+0)}"/>
             <child link="link_${'%02d' % (finger_num*4+1)}"/>
             <origin xyz="0 0 ${link0_z}"/>
-            <dynamics damping="3" friction="5"/>
+            <dynamics damping="0.01" friction="0.01"/>
         </joint>
 
         <!-- [LINK 2, 6, 10]-->
@@ -386,13 +386,13 @@
 
         <joint name="joint_${'%02d' % (finger_num*4+2)}" type="revolute">
             <axis xyz="0 1 0"/>
-            <limit effort="15" velocity="7"
+            <limit effort="0.71" velocity="0.12"
                    lower="${limit_2_low+joint_safety_margin}"
                    upper="${limit_2_up-joint_safety_margin}"/>
             <parent link="link_${'%02d' % (finger_num*4+1)}"/>
             <child link="link_${'%02d' % (finger_num*4+2)}"/>
             <origin xyz="0 0 ${link1_z}"/>
-            <dynamics damping="8" friction="10"/>
+            <dynamics damping="0.01" friction="0.01"/>
         </joint>
 
         <!-- [LINK 3, 7, 11] -->
@@ -422,13 +422,13 @@
 
         <joint name="joint_${'%02d' % (finger_num*4+3)}" type="revolute">
             <axis xyz="0 1 0"/>
-            <limit effort="15" velocity="7"
+            <limit effort="0.71" velocity="0.12"
                    lower="${limit_3_low+joint_safety_margin}"
                    upper="${limit_3_up-joint_safety_margin}"/>
             <parent link="link_${'%02d' % (finger_num*4+2)}"/>
             <child link="link_${'%02d' % (finger_num*4+3)}"/>
             <origin xyz="0 0 ${link2_z}"/>
-            <dynamics damping="10" friction="12"/>
+            <dynamics damping="0.01" friction="0.01"/>
         </joint>
 
         <!-- [FINGER TIP] -->
