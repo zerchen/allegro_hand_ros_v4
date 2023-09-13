@@ -18,10 +18,6 @@ common driver, introduces an AllegroNode C++ class that reduces the amount of
 duplicated code. It also provides a python library that can control the hand
 directly.
 
-It also provides the BHand library directly in this package (including both
-32-bit and 64-bit versions, though 32-bit systems will need to update the
-symlink manually).
-
 At this point no effort has been made to be backwards compatible. Some of the
 non-compatible changes between the two version are:
 
@@ -91,8 +87,6 @@ Packages
    * sim: Just pass desired joint states through as current joint states.
  * **allegro_hand_description** xacro descriptions for the kinematics of the
      hand, rviz configuration and meshes.
- * **bhand** Library files for the predefined grasps, available in 32 and 64 bit
-     versions. 64 bit by default, update symlink for 32 bit.
 
 Note on polling (from Wonik Robotics): The preferred sampling method is utilizing the
 Hand's own real time clock running @ 333Hz by polling the CAN communication
