@@ -1,18 +1,17 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="allegro_hand">
 
-    <xacro:arg name="chirality" default=""/>
-    <xacro:arg name="gz_plugin_namespace" default=""/>
+    <xacro:macro name="allegro_hand" params="chirality parent *origin prefix last_links_inertia_factor=1.0">
 
     <!-- ======================== CHIRALITY PARAMS ========================= -->
-    <xacro:property name="suffix" value="$(arg chirality)"/>
+    <xacro:property name="suffix" value="${chirality}"/>
     <xacro:property name="minus_left"  value="${-1 if suffix == 'left' else  1}"/>
     <xacro:property name="minus_right" value="${-1 if suffix == 'right' else  1}"/>
     <xacro:property name="zero_left"   value="${0 if suffix == 'left' else 1}"/>
     <xacro:property name="zero_right"  value="${0 if suffix == 'right' else 1}"/>
 
     <xacro:if value="${minus_right * minus_left != -1}">
-	INVALID CHIRALITY, MUST BE "LEFT" OR "RIGHT"
+    INVALID CHIRALITY, MUST BE "left" OR "right"
     </xacro:if>
 
     <xacro:property name="DEG2RAD" value="0.01745329251"/>
@@ -67,7 +66,7 @@
     <!-- ============================================================================= -->
 
     <!-- PALM -->
-    <link name="palm_link">
+    <link name="${prefix}_palm_link">
         <visual>
             <geometry>
                 <mesh filename="package://allegro_hand_description/meshes/base_link_${suffix}.STL"/>
@@ -85,21 +84,21 @@
             </geometry>
         </collision>
         <inertial>
-          <origin xyz="0 0 ${palm_link_z/2}" rpy="0 0 0"/>
-          <mass value="0.4154"/>
-          <inertia
-              ixx="1e-4" ixy="0.0" ixz="0.0"
-              iyy="1e-4" iyz="0.0"
-              izz="1e-4"/>
+        <origin xyz="0 0 ${palm_link_z/2}" rpy="0 0 0"/>
+        <mass value="0.4154"/>
+        <inertia
+            ixx="1e-4" ixy="0.0" ixz="0.0"
+            iyy="1e-4" iyz="0.0"
+            izz="1e-4"/>
         </inertial>
     </link>
 
     <!-- THUMB MACRO -->
     <xacro:macro name="thumb"
-                 params="finger_num offset_origin_x offset_origin_y offset_origin_z finger_angle_r finger_angle_p finger_angle_y">
+                params="finger_num offset_origin_x offset_origin_y offset_origin_z finger_angle_r finger_angle_p finger_angle_y">
 
         <!-- [LINK 12] -->
-        <link name="link_${'%02d' % (finger_num*4+0)}">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+0)}">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_12.0_${suffix}.STL"/>
@@ -118,28 +117,28 @@
             </collision>
 
             <inertial>
-              <mass value="0.0176" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="1.89273333333e-5" ixy="7.16716e-06" ixz="5.35568e-06"
-                       iyy="1.43008213333e-05" iyz="6.8068e-06"
-                       izz="1.89273333333e-05" />
+            <mass value="0.0176" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1.892e-05" ixy="7.167e-06" ixz="5.355e-06"
+                     iyy="1.430e-05" iyz="6.806e-06"
+                     izz="1.892e-05" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+0)}" type="revolute">
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+0)}" type="revolute">
             <axis xyz="${minus_right} 0 0"/>
             <limit effort="0.71" velocity="0.12"
-                   lower="${limit_0_t_low+joint_safety_margin}"
-                   upper="${limit_0_t_up-joint_safety_margin}"/>
-            <parent link="palm_link"/>
-            <child link="link_${'%02d' % (finger_num*4+0)}"/>
+                lower="${limit_0_t_low+joint_safety_margin}"
+                upper="${limit_0_t_up-joint_safety_margin}"/>
+            <parent link="${prefix}_palm_link"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+0)}"/>
             <origin rpy="${finger_angle_r} ${finger_angle_p} ${finger_angle_y}"
                     xyz="${offset_origin_x} ${offset_origin_y} ${offset_origin_z}"/>
             <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 13] -->
-        <link name="link_${'%02d' % (finger_num*4+1)}">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+1)}">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_13.0.STL"/>
@@ -157,27 +156,27 @@
             </collision>
 
             <inertial>
-              <mass value="0.0119" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="4.24250866667e-06" ixy="1.032087e-06" ixz="1.603525e-06"
-                       iyy="4.52362633333e-06" iyz="1.44808125e-06"
-                       izz="4.24250866667e-06" />
+            <mass value="0.0119" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="4.242e-06" ixy="1.032e-06" ixz="1.603e-06"
+                     iyy="4.523e-06" iyz="1.448e-06"
+                     izz="4.242e-06" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+1)}" type="revolute">
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+1)}" type="revolute">
             <axis xyz="0 0 ${minus_left}"/>
             <limit effort="0.71" velocity="0.12"
-                   lower="${limit_1_t_low+joint_safety_margin}"
-                   upper="${limit_1_t_up-joint_safety_margin}"/>
-            <parent link="link_${'%02d' % (finger_num*4+0)}"/>
-            <child link="link_${'%02d' % (finger_num*4+1)}"/>
+                lower="${limit_1_t_low+joint_safety_margin}"
+                upper="${limit_1_t_up-joint_safety_margin}"/>
+            <parent link="${prefix}_link_${'%02d' % (finger_num*4+0)}"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+1)}"/>
             <origin xyz="-0.027 ${minus_left * 0.005} 0.0399"/>
             <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 14] -->
-        <link name="link_${'%02d' % (finger_num*4+2)}">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+2)}">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_14.0.STL"/>
@@ -194,26 +193,26 @@
             </collision>
 
             <inertial>
-              <mass value="0.038" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="4.30439933333e-05" ixy="9.57068e-06" ixz="5.1205e-06" iyy="1.44451933333e-05"
-                       iyz="1.342825e-05" izz="4.30439933333e-05" />
+            <mass value="0.038" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="4.304e-05" ixy="9.570e-06" ixz="5.120e-06" iyy="1.444e-05"
+                     iyz="1.342e-05" izz="4.304e-05" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+2)}" type="revolute">
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+2)}" type="revolute">
             <axis xyz="0 1 0"/>
             <limit effort="0.71" velocity="0.12"
-                   lower="${limit_2_t_low+joint_safety_margin}"
-                   upper="${limit_2_t_up-joint_safety_margin}"/>
-            <parent link="link_${'%02d' % (finger_num*4+1)}"/>
-            <child link="link_${'%02d' % (finger_num*4+2)}"/>
+                lower="${limit_2_t_low+joint_safety_margin}"
+                upper="${limit_2_t_up-joint_safety_margin}"/>
+            <parent link="${prefix}_link_${'%02d' % (finger_num*4+1)}"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+2)}"/>
             <origin xyz="0 0 ${link1_t_z}"/>
             <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 15] -->
-        <link name="link_${'%02d' % (finger_num*4+3)}">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_15.0.STL"/>
@@ -230,27 +229,27 @@
             </collision>
 
             <inertial>
-              <mass value="0.0388" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="3.29223173333e-05" ixy="8.042076e-06" ixz="5.2283e-06"
-                       iyy="1.47493026667e-5" iyz="1.1283525e-5"
-                       izz="3.29223173333e-05" />
+            <mass value="0.0388" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="${last_links_inertia_factor * 3.292e-05}" ixy="${last_links_inertia_factor * 8.042e-06}" ixz="${last_links_inertia_factor * 5.228e-06}"
+                     iyy="${last_links_inertia_factor * 1.474e-05}" iyz="${last_links_inertia_factor * 1.128e-05}"
+                     izz="${last_links_inertia_factor * 3.292e-05}" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+3)}" type="revolute">
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+3)}" type="revolute">
             <axis xyz="0 1 0"/>
             <limit effort="0.71" velocity="0.12"
-                   lower="${limit_3_t_low+joint_safety_margin}"
-                   upper="${limit_3_t_up-joint_safety_margin}"/>
-            <parent link="link_${'%02d' % (finger_num*4+2)}"/>
-            <child link="link_${'%02d' % (finger_num*4+3)}"/>
+                lower="${limit_3_t_low+joint_safety_margin}"
+                upper="${limit_3_t_up-joint_safety_margin}"/>
+            <parent link="${prefix}_link_${'%02d' % (finger_num*4+2)}"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+3)}"/>
             <origin xyz="0 0 ${link2_t_z}"/>
             <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [FINGER TIP] -->
-        <link name="link_${'%02d' % (finger_num*4+3)}_tip">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}_tip">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_15.0_tip.STL"/>
@@ -268,17 +267,17 @@
             </collision>
 
             <inertial>
-              <mass value="0.0168" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="9.68e-07" ixy="0" ixz="0"
-                       iyy="9.68e-07" iyz="0"
-                       izz="9.68e-07" />
+            <mass value="0.0168" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="${last_links_inertia_factor * 9.680e-07}" ixy="0.0" ixz="0.0"
+                     iyy="${last_links_inertia_factor * 9.680e-07}" iyz="0.0"
+                     izz="${last_links_inertia_factor * 9.680e-07}" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+3)}_tip" type="fixed">
-            <parent link="link_${'%02d' % (finger_num*4+3)}"/>
-            <child link="link_${'%02d' % (finger_num*4+3)}_tip"/>
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+3)}_tip" type="fixed">
+            <parent link="${prefix}_link_${'%02d' % (finger_num*4+3)}"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+3)}_tip"/>
             <origin rpy="0 0 0" xyz="0 0 ${link3_t_z-fingerTip_r}"/>
         </joint>
     </xacro:macro>
@@ -286,10 +285,10 @@
 
     <!-- THREE FINGER MACRO -->
     <xacro:macro name="finger"
-                 params="finger_num offset_origin_x offset_origin_y offset_origin_z finger_angle_r">
+                params="finger_num offset_origin_x offset_origin_y offset_origin_z finger_angle_r">
 
         <!-- [LINK 0, 4, 8] -->
-        <link name="link_${'%02d' % (finger_num*4+0)}">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+0)}">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_0.0.STL"/>
@@ -305,28 +304,28 @@
             </collision>
 
             <inertial>
-              <mass value="0.0119" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="1.01666658333e-06" ixy="0.0" ixz="0.0"
-                       iyy="6.47677333333e-07" iyz="0.0"
-                       izz="1.01666658333e-06" />
+            <mass value="0.0119" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="1.016e-06" ixy="0.0" ixz="0.0"
+                     iyy="6.476e-07" iyz="0.0"
+                     izz="1.016e-06" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+0)}" type="revolute">
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+0)}" type="revolute">
             <axis xyz="0 0 1"/>
             <limit effort="0.71" velocity="0.12"
-                   lower="${limit_0_low+joint_safety_margin}"
-                   upper="${limit_0_up-joint_safety_margin}"/>
-            <parent link="palm_link"/>
-            <child link="link_${'%02d' % (finger_num*4+0)}"/>
+                lower="${limit_0_low+joint_safety_margin}"
+                upper="${limit_0_up-joint_safety_margin}"/>
+            <parent link="${prefix}_palm_link"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+0)}"/>
             <origin rpy="${finger_angle_r} 0 0"
                     xyz="${offset_origin_x} ${offset_origin_y} ${offset_origin_z}"/>
             <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 1, 5, 9] -->
-        <link name="link_${'%02d' % (finger_num*4+1)}">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+1)}">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_1.0.STL"/>
@@ -341,27 +340,27 @@
                 <origin rpy="0 0 0" xyz="0 0 ${link1_z/2}"/>
             </collision>
             <inertial>
-              <mass value="0.065" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="7.95654166667e-05" ixy="1.7199e-05" ixz="8.75875e-06"
-                       iyy="2.47088833333e-05" iyz="2.413125e-05"
-                       izz="7.95654166667e-05" />
+            <mass value="0.065" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="7.956e-05" ixy="1.719e-05" ixz="8.758e-06"
+                     iyy="2.470e-05" iyz="2.413e-05"
+                     izz="7.956e-05" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+1)}" type="revolute">
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+1)}" type="revolute">
             <limit effort="0.71" velocity="0.12"
-                   lower="${limit_1_low+joint_safety_margin}"
-                   upper="${limit_1_up-joint_safety_margin}"/>
+                lower="${limit_1_low+joint_safety_margin}"
+                upper="${limit_1_up-joint_safety_margin}"/>
             <axis xyz="0 1 0"/>
-            <parent link="link_${'%02d' % (finger_num*4+0)}"/>
-            <child link="link_${'%02d' % (finger_num*4+1)}"/>
+            <parent link="${prefix}_link_${'%02d' % (finger_num*4+0)}"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+1)}"/>
             <origin xyz="0 0 ${link0_z}"/>
             <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 2, 6, 10]-->
-        <link name="link_${'%02d' % (finger_num*4+2)}">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+2)}">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_2.0.STL"/>
@@ -377,27 +376,27 @@
             </collision>
 
             <inertial>
-              <mass value="0.0355" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="2.63979183333e-05" ixy="6.67968e-06" ixz="4.783625e-06"
-                       iyy="1.34948516667e-05" iyz="9.372e-06"
-                       izz="2.63979183333e-05" />
+            <mass value="0.0355" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="${last_links_inertia_factor * 2.639e-05}" ixy="${last_links_inertia_factor * 6.679e-06}" ixz="${last_links_inertia_factor * 4.783e-06}"
+                     iyy="${last_links_inertia_factor * 1.349e-05}" iyz="${last_links_inertia_factor * 9.372e-06}"
+                     izz="${last_links_inertia_factor * 2.639e-05}" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+2)}" type="revolute">
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+2)}" type="revolute">
             <axis xyz="0 1 0"/>
             <limit effort="0.71" velocity="0.12"
-                   lower="${limit_2_low+joint_safety_margin}"
-                   upper="${limit_2_up-joint_safety_margin}"/>
-            <parent link="link_${'%02d' % (finger_num*4+1)}"/>
-            <child link="link_${'%02d' % (finger_num*4+2)}"/>
+                lower="${limit_2_low+joint_safety_margin}"
+                upper="${limit_2_up-joint_safety_margin}"/>
+            <parent link="${prefix}_link_${'%02d' % (finger_num*4+1)}"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+2)}"/>
             <origin xyz="0 0 ${link1_z}"/>
             <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [LINK 3, 7, 11] -->
-        <link name="link_${'%02d' % (finger_num*4+3)}">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_3.0.STL"/>
@@ -413,27 +412,27 @@
             </collision>
 
             <inertial>
-              <mass value="0.0096" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="4.701248e-06" ixy="1.255968e-06" ixz="1.2936e-06"
-                       iyy="3.649312e-06" iyz="1.7622e-06"
-                       izz="4.701248e-06" />
+            <mass value="0.0096" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="${last_links_inertia_factor * 4.701e-06}" ixy="${last_links_inertia_factor * 1.255e-06}" ixz="${last_links_inertia_factor * 1.293e-06}"
+                     iyy="${last_links_inertia_factor * 3.649e-06}" iyz="${last_links_inertia_factor * 1.762e-06}"
+                     izz="${last_links_inertia_factor * 4.701e-06}" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+3)}" type="revolute">
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+3)}" type="revolute">
             <axis xyz="0 1 0"/>
             <limit effort="0.71" velocity="0.12"
-                   lower="${limit_3_low+joint_safety_margin}"
-                   upper="${limit_3_up-joint_safety_margin}"/>
-            <parent link="link_${'%02d' % (finger_num*4+2)}"/>
-            <child link="link_${'%02d' % (finger_num*4+3)}"/>
+                lower="${limit_3_low+joint_safety_margin}"
+                upper="${limit_3_up-joint_safety_margin}"/>
+            <parent link="${prefix}_link_${'%02d' % (finger_num*4+2)}"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+3)}"/>
             <origin xyz="0 0 ${link2_z}"/>
             <dynamics damping="0.1" friction="0.01"/>
         </joint>
 
         <!-- [FINGER TIP] -->
-        <link name="link_${'%02d' % (finger_num*4+3)}_tip">
+        <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}_tip">
             <visual>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/link_3.0_tip.STL"/>
@@ -450,17 +449,17 @@
             </collision>
 
             <inertial>
-              <mass value="0.0168" />
-              <origin xyz="0 0 0" rpy="0 0 0"/>
-              <inertia ixx="9.68e-07" ixy="0" ixz="0"
-                       iyy="9.68e-07" iyz="0"
-                       izz="9.68e-07" />
+            <mass value="0.0168" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia ixx="${last_links_inertia_factor * 9.680e-07}" ixy="0.0" ixz="0.0"
+                     iyy="${last_links_inertia_factor * 9.680e-07}" iyz="0.0"
+                     izz="${last_links_inertia_factor * 9.680e-07}" />
             </inertial>
         </link>
 
-        <joint name="joint_${'%02d' % (finger_num*4+3)}_tip" type="fixed">
-            <parent link="link_${'%02d' % (finger_num*4+3)}"/>
-            <child link="link_${'%02d' % (finger_num*4+3)}_tip"/>
+        <joint name="${prefix}_joint_${'%02d' % (finger_num*4+3)}_tip" type="fixed">
+            <parent link="${prefix}_link_${'%02d' % (finger_num*4+3)}"/>
+            <child link="${prefix}_link_${'%02d' % (finger_num*4+3)}_tip"/>
             <origin rpy="0 0 0" xyz="0 0 ${link3_z-fingerTip_r}"/>
         </joint>
     </xacro:macro>
@@ -504,23 +503,22 @@
 
     <!-- ============================= GAZEBO SIMULATION ============================= -->
 
-    <link name="world"/>
-    <joint name="root_joint" type="fixed">
-                <parent link="world"/>
-                <child link="palm_link"/>
-                <origin rpy="0 0 0" xyz="0 0 0.15"/>
+    <joint name="${prefix}_palm_joint" type="fixed">
+                <parent link="${parent}"/>
+                <child link="${prefix}_palm_link"/>
+                <xacro:insert_block name="origin"/>
     </joint>
 
     <xacro:macro name="make_transmission" params="joint_num">
-        <transmission name="joint_${'%02d' % joint_num}_trans">
-        <type>transmission_interface/SimpleTransmission</type>
-        <joint name="joint_${'%02d' % joint_num}">
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </joint>
-        <actuator name="joint_${'%02d' % joint_num}_motor">
-            <mechanicalReduction>1</mechanicalReduction>
-            <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-        </actuator>
+        <transmission name="${prefix}_joint_${'%02d' % joint_num}_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${prefix}_joint_${'%02d' % joint_num}">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${prefix}_joint_${'%02d' % joint_num}_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </actuator>
         </transmission>
     </xacro:macro>
 
@@ -542,9 +540,28 @@
     <xacro:make_transmission joint_num="15"/>
 
     <gazebo>
-      <plugin name="ros_control" filename="libgazebo_ros_control.so">
-        <robotNamespace>/$(arg gz_plugin_namespace)</robotNamespace>
+    <plugin name="${prefix}_ros_control" filename="libgazebo_ros_control_select_joints.so">
+        <robotNamespace>/${prefix}</robotNamespace>
         <legacyModeNS>true</legacyModeNS>
-      </plugin>
+        <joints>
+            ${prefix}_joint_00
+            ${prefix}_joint_01
+            ${prefix}_joint_02
+            ${prefix}_joint_03
+            ${prefix}_joint_04
+            ${prefix}_joint_05
+            ${prefix}_joint_06
+            ${prefix}_joint_07
+            ${prefix}_joint_08
+            ${prefix}_joint_09
+            ${prefix}_joint_10
+            ${prefix}_joint_11
+            ${prefix}_joint_12
+            ${prefix}_joint_13
+            ${prefix}_joint_14
+            ${prefix}_joint_15
+        </joints>
+    </plugin>
     </gazebo>
+    </xacro:macro>
 </robot>

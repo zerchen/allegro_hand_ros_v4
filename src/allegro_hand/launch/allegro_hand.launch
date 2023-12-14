@@ -15,10 +15,7 @@
   -->
 
 
-  <!-- The inclusion of which_hand in the zero.yaml file has been deprecated.
-       Which hand (left/right) must now be specified as an argument when launching the Allegro Hand
-       as an input for both the robot_description and for the grasping library controllers. -->
-  <arg name="HAND"/>
+  <arg name="HAND" doc="left or right"/>
   <arg name="NUM" default="0"/>
   <arg name="GAZEBO" default="false"/>
 
@@ -47,9 +44,9 @@
        in two parameter names.) -->
   <param name="robot_description"
          command="$(find xacro)/xacro
-                  $(find allegro_hand_description)/allegro_hand_description.xacro
+                  $(find allegro_hand)/urdf/allegro_hand_on_stand.urdf.xacro
                   chirality:=$(arg HAND)
-                  gz_plugin_namespace:=$(arg hand_name)"/>
+                  prefix:=$(arg HAND)_hand"/>
 
   <!-- Allegro Hand controller and communication node. -->
   <node unless="$(arg GAZEBO)"
