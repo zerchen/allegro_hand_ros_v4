@@ -14,10 +14,10 @@ static inline std::string &rtrim(std::string &s)
 
 std::string jointNames[DOF_JOINTS] =
         {
-                "joint_00", "joint_01", "joint_02", "joint_03",
-                "joint_04", "joint_05", "joint_06", "joint_07",
-                "joint_08", "joint_09", "joint_10", "joint_11",
-                "joint_12", "joint_13", "joint_14", "joint_15"
+                "_joint_00", "_joint_01", "_joint_02", "_joint_03",
+                "_joint_04", "_joint_05", "_joint_06", "_joint_07",
+                "_joint_08", "_joint_09", "_joint_10", "_joint_11",
+                "_joint_12", "_joint_13", "_joint_14", "_joint_15"
         };
 
 
@@ -34,6 +34,13 @@ AllegroHWI::AllegroHWI() {
   assert(ros::param::has("~comm/CAN_CH"));
   ros::param::get("~comm/CAN_CH", can_ch);
   rtrim(can_ch);  // Ensure the ROS parameter has no trailing whitespace.
+
+  // Initialize joint name
+  std::string prefix_name;
+  ros::param::get("~prefix", prefix_name);
+  for (int i = 0; i < DOF_JOINTS; i++) {
+    jointNames[i].insert(0, prefix_name);
+  }
 
   canDevice = new allegro::AllegroHandDrv();
   if (canDevice->init(can_ch)) {

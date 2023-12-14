@@ -1,10 +1,25 @@
 
 <launch>
   <arg name="hand_name"/>
+  <arg name="gazebo" doc="Control the hand from gazebo simulator"/>
+
+  <!-- Node to control the actual hardware -->
+  <group unless="$(arg gazebo)">
+    <arg name="auto_can" default="true"/>
+    <arg name="can_device" unless="$(arg auto_can)"/>
+
+    <node pkg="allegro_hand_controllers" type="allegro_node" name="$(arg hand_name)_node" output="screen" ns="$(arg hand_name)">
+      <param name="prefix" value="$(arg hand_name)"/>
+        <!-- Set the CAN channel automatically (using detect_pcan.py) if the auto_can parameter is true, otherwise use the can_device
+          argument. NOTE: To manually set the can device, you must *also* set auto_can:=false. -->
+      <param name="/comm/CAN_CH" value="$(arg can_device)"                                unless="$(arg auto_can)" />
+      <param name="/comm/CAN_CH" command="$(find allegro_hand_driver)/scripts/detect_pcan.py" if="$(arg auto_can)" />
+    </node>
+  </group>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find allegro_hand_controllers)/config/controllers.yaml" command="load" ns="$(arg hand_name)" subst_value="true"/>
 
    <!-- load the controllers -->
-  <node name="controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" ns="$(arg hand_name)" args="joint_state_controller joint_ff_controller"  output="screen"/>
+  <node name="controller_spawner_hand" pkg="controller_manager" type="spawner" respawn="false" ns="$(arg hand_name)" args="joint_state_controller joint_ff_controller" output="screen"/>
 </launch>

@@ -27,8 +27,6 @@
     <arg name="NUM" value="$(arg NUM)"/>
   </include>
 
-  <arg name="POLLING" default="true"/> <!-- true, false for polling the CAN communication -->
-
   <!-- ls -l /dev/pcan* to see your open CAN ports. Auto means find it
        automatically, and ignores the CAN_DEVICE argument. -->
   <arg name="AUTO_CAN" default="true" />
@@ -49,29 +47,10 @@
                   prefix:=$(arg HAND)_hand"/>
 
   <!-- Allegro Hand controller and communication node. -->
-  <node unless="$(arg GAZEBO)"
-        name="allegro_node"
-        pkg="allegro_hand_controllers"
-        type="allegro_node"
-        output="screen"
-        clear_params="true"
-        respawn="$(arg RESPAWN)"
-        respawn_delay="2"
-        args="$(arg POLLING)"
-        ns="/$(arg hand_name)">
-
-    <!-- Set the CAN channel automatically (using detect_pcan.py) if the
-         AUTO_CAN parameter is true, otherwise use the CAN_DEVICE
-         argument. NOTE: To manually set the can device, you must *also* set
-         AUTO_CAN:=false. -->
-    <param name="/comm/CAN_CH" value="$(arg CAN_DEVICE)"
-           unless="$(arg AUTO_CAN)" />
-    <param name="/comm/CAN_CH"
-           command="$(find allegro_hand_driver)/scripts/detect_pcan.py"
-           if="$(arg AUTO_CAN)" />
-
-    <param name="/hand_info/which_hand" value="$(arg HAND)" /> <!-- See HAND arg above -->
-  </node>
+  <include file="$(find allegro_hand_controllers)/launch/allegro_hand_controllers.launch">
+     <arg name="hand_name" value="$(arg HAND)_hand"/>
+     <arg name="gazebo" value="$(arg GAZEBO)"/>
+  </include>
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include if="$(arg GAZEBO)" file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -84,10 +63,6 @@
   <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
   <node if="$(arg GAZEBO)" name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
   args="-urdf -model $(arg hand_name) -param robot_description"/>
-
-  <include file="$(find allegro_hand_controllers)/launch/allegro_hand_controllers.launch">
-     <arg name="hand_name" value="$(arg HAND)_hand"/>
-  </include>
 
   <!-- Joint States (angles) to Joint Transforms -->
   <node name="jointState2tf_$(arg NUM)" pkg="robot_state_publisher" type="robot_state_publisher">
