@@ -85,12 +85,9 @@
   <node if="$(arg GAZEBO)" name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
   args="-urdf -model $(arg hand_name) -param robot_description"/>
 
-  <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find allegro_hand_controllers)/config/controllers.yaml" command="load" ns="/$(arg hand_name)"/>
-
-   <!-- load the controllers -->
-  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" ns="/$(arg hand_name)" args="joint_state_controller joint_ff_controller"/>
+  <include file="$(find allegro_hand_controllers)/launch/allegro_hand_controllers.launch">
+     <arg name="hand_name" value="$(arg HAND)_hand"/>
+  </include>
 
   <!-- Joint States (angles) to Joint Transforms -->
   <node name="jointState2tf_$(arg NUM)" pkg="robot_state_publisher" type="robot_state_publisher">

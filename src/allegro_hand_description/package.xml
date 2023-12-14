@@ -12,6 +12,9 @@
     <!-- Commonly used license strings: -->
     <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
     <license>TODO</license>
+
+    <run_depend>gazebo_ros_control_select_joints</run_depend>
+
     <!-- The export tag contains other, unspecified, tags -->
     <export>
         <!-- Other tools can request additional information be placed here -->
