@@ -14,11 +14,10 @@ Launch file instructions:
 
 There is now a single file, [allegro_hand.launch](src/allegro_hand/launch/allegro_hand.launch) that starts the hand. It takes many arguments, but at a minimum you must specify the handedness:
 
-    roslaunch allegro_hand_controllers allegro_hand.launch HAND:=right
+    roslaunch allegro_hand_controllers allegro_hand.launch CHIRALITY:=right
 
 Optional (recommended) arguments:
 
-          NUM:=0|1|...
           RESPAWN:=true|false   Respawn controller if it dies.
           AUTO_CAN:=true|false  (default is true)
           CAN_DEVICE:=/dev/pcanusb1 | /dev/pcanusbNNN  (ls -l /dev/pcan* to see open CAN devices)
@@ -29,9 +28,7 @@ Note on `AUTO_CAN`: The script `detect_pcan.py` will automatically finds an open
 
 The second launch file is for visualization, it is included in `allegro_hand.launch` if `VISUALIZE:=true`. Otherwise, it can be useful to run it separately (with `VISUALIZE:=false`), for example if you want to start rviz separately (and keep it running):
 
-    roslaunch allegro_hand_controllers allegro_viz.launch HAND:=right
-
-Note that you should also specify the hand `NUM` parameter in the viz launch if the hand number is not zero.
+    roslaunch allegro_hand_controllers allegro_viz.launch CHIRALITY:=right
 
 Packages
 --------
@@ -56,9 +53,9 @@ Controlling More Than One Hand
 
 When running more than one hand using ROS, you must specify the number of the hand when launching.
 
-    roslaunch allegro_hand.launch HAND:=right NUM:=0 CAN_DEVICE:=/dev/pcan0 AUTO_CAN:=false
+    roslaunch allegro_hand.launch CHIRALITY:=right CAN_DEVICE:=/dev/pcan0 AUTO_CAN:=false
 
-    roslaunch allegro_hand.launch HAND:=left NUM:=1 CAN_DEVICE:=/dev/pcan1 AUTO_CAN:=false
+    roslaunch allegro_hand.launch CHIRALITY:=left CAN_DEVICE:=/dev/pcan1 AUTO_CAN:=false
 
 
 Known Issues:
@@ -108,5 +105,5 @@ from the downloaded pcan folder: this theoretically creates the devices files if
 
 4. quick start
     cd src/allegro_hand_controllers/launch
-    roslaunch allegro_hand.launch HAND:=right
+    roslaunch allegro_hand.launch CHIRALITY:=right
 
