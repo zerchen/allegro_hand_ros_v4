@@ -38,6 +38,7 @@ Packages
  * **allegro_hand_controllers** Expose the allegro hand to be compatible with ros_control.
  * **allegro_hand_description** xacro descriptions for the kinematics of the
      hand, rviz configuration and meshes.
+* **allegro_hand_ros_v4** Empty meta-package to compile all the above package conveniently (i.e. `catkin build allegro_hand_ros_v4` build all of them).
 
 Note on polling (from Wonik Robotics): The preferred sampling method is utilizing the Hand's own real time clock running @ 333Hz by polling the CAN communication. In fact, ROS's interrupt/sleep combination might cause instability in CAN communication resulting unstable hand motions.
 
@@ -99,11 +100,15 @@ If you do not see any available files, you may need to run:
 from the downloaded pcan folder: this theoretically creates the devices files if the system has not done it automatically.
 
 3. Build the sources
-
-    catkin_make
+```bash
+    catkin build
     source devel/setup.bash
+```
 
 4. quick start
-    cd src/allegro_hand_controllers/launch
-    roslaunch allegro_hand.launch CHIRALITY:=right
+```bash
+    roslaunch allegro_hand.launch GAZEBO:=True CHIRALITY:=right
+    # Or
+    roslaunch example_wave.launch
+```
 
