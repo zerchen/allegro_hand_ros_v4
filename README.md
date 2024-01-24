@@ -7,7 +7,9 @@ This is a fork of the official release to control Allegro Hand with ROS Kinetic 
 * Patch some tremendous errors (e.g the velocity computation)
 * Simplify it
 * Follow ROS standard and making it compatible with ros_control
-* Provide a simulator that replicate the real robot behavior, using Gazebo (which was easy once the above point was done).
+* Provide a simulator that replicate the real robot behavior, using Gazebo (using previous point).
+
+**Note:** The repo [inria-paris-robotics-lab/allegro_hand_hardware_v4](https://github.com/inria-paris-robotics-lab/allegro_hand_hardware_v4) contains CAD files for mounting the Allegro Hand on a UR5 arm.
 
 Launch file instructions:
 ------------------------
