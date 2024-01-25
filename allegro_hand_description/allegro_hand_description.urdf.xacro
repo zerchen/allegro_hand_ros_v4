@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="allegro_hand">
 
-    <xacro:macro name="allegro_hand" params="chirality parent *origin prefix last_links_inertia_factor=1.0">
+    <xacro:macro name="allegro_hand" params="chirality parent *origin prefix ur5_attachment:=false desk_stand:=false last_links_inertia_factor=1.0">
 
     <!-- ======================== CHIRALITY PARAMS ========================= -->
     <xacro:property name="suffix" value="${chirality}"/>
@@ -69,7 +69,7 @@
     <link name="${prefix}_palm_link">
         <visual>
             <geometry>
-                <mesh filename="package://allegro_hand_description/meshes/base_link_${suffix}.STL"/>
+                <mesh filename="package://allegro_hand_description/meshes/hand_visuals/base_link_${suffix}.stl"/>
             </geometry>
             <origin rpy="0 0 0" xyz="0 0 0 "/>
             <material name="black">
@@ -101,7 +101,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+0)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_12.0_${suffix}.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_12_${suffix}.stl"/>
                 </geometry>
                 <material name="black">
                     <color rgba=".2 .2 .2 1"/>
@@ -141,7 +141,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+1)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_13.0.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_13.stl"/>
                 </geometry>
                 <material name="black">
                     <color rgba=".2 .2 .2 1"/>
@@ -179,7 +179,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+2)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_14.0.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_14.stl"/>
                 </geometry>
                 <material name="black">
                 </material>
@@ -215,7 +215,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_15.0.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_15.stl"/>
                 </geometry>
                 <material name="black">
                 </material>
@@ -252,7 +252,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}_tip">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_15.0_tip.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_15_tip.stl"/>
                 </geometry>
                 <material name="white">
                     <color rgba=".9 .9 .9 1"/>
@@ -291,7 +291,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+0)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_0.0.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_0.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -328,7 +328,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+1)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_1.0.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_1.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -363,7 +363,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+2)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_2.0.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_2.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -399,7 +399,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_3.0.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_3.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -435,7 +435,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}_tip">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/link_3.0_tip.STL"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_3_tip.stl"/>
                 </geometry>
                 <material name="white">
                     <color rgba=".9 .9 .9 1"/>
