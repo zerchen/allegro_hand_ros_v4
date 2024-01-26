@@ -18,6 +18,7 @@
 
     <!-- ======================== BASE PARAMS ========================= -->
     <xacro:property name="palm_link_z" value="0.095"/>
+    <xacro:property name="palm_link_x" value="-0.009300"/>
 
     <!-- ======================== FINGER PARAMS ======================== -->
     <xacro:property name="links_x" value="0.0196"/>
@@ -63,8 +64,7 @@
     <xacro:property name="limit_3_t_up" value="1.819"/>
     <xacro:property name="limit_3_t_low" value="-0.262"/>
 
-    <!-- ============================================================================= -->
-
+    <!-- ============================= HAND and FINGERS ============================== -->
     <!-- PALM -->
     <link name="${prefix}_palm_link">
         <visual>
@@ -78,7 +78,7 @@
         </visual>
 
         <collision>
-            <origin rpy="0 0 0" xyz="-0.009300 0 -${palm_link_z/2}"/>
+            <origin rpy="0 0 0" xyz="${palm_link_x} 0 -${palm_link_z/2}"/>
             <geometry>
                 <box size="0.0408 0.1130 ${palm_link_z}"/>
             </geometry>
@@ -501,13 +501,50 @@
             finger_angle_y="${minus_right * 90*DEG2RAD}"
             />
 
-    <!-- ============================= GAZEBO SIMULATION ============================= -->
+    <!-- ================================== SUPPORT ================================== -->
+    <xacro:if value="${ur5_attachment}">
+        <link name="${prefix}_ur5_attachment">
+            <visual>
+                <geometry>
+                    <mesh filename="package://allegro_hand_description/meshes/support_visuals/UR5_attachment.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="grey">
+                    <color rgba=".7 .7 .7 1"/>
+                </material>
+            </visual>
 
-    <joint name="${prefix}_palm_joint" type="fixed">
-                <parent link="${parent}"/>
-                <child link="${prefix}_palm_link"/>
-                <xacro:insert_block name="origin"/>
-    </joint>
+            <collision>
+                <geometry>
+                    <mesh filename="package://allegro_hand_description/meshes/support_visuals/UR5_attachment_bottom_collision.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <geometry>
+                    <mesh filename="package://allegro_hand_description/meshes/support_visuals/UR5_attachment_top_collision.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.200" />
+                <origin xyz="0 -2.4e-04 1.5e-02" rpy="0 0 0"/>
+                <inertia ixx="1.0e-04" ixy="0"        ixz="0"
+                                       iyy="1.0e-04"  iyz="-4.0e-07"
+                                                      izz="1.2e-04" />
+            </inertial>
+        </link>
+
+        <joint name="${prefix}_ur5_attachment_joint" type="fixed">
+            <parent link="${prefix}_ur5_attachment"/>
+            <child link="${prefix}_palm_link"/>
+            <origin rpy="0 0 ${90*deg2rad}" xyz="0 ${-palm_link_x} ${0.05+palm_link_z}"/>
+        </joint>
+
+        <joint name="${prefix}_palm_joint" type="fixed">
+                    <parent link="${parent}"/>
+                    <child link="${prefix}_ur5_attachment"/>
+                    <xacro:insert_block name="origin"/>
+        </joint>
+    </xacro:if>
+
+    <!-- ============================= GAZEBO SIMULATION ============================= -->
 
     <xacro:macro name="make_transmission" params="joint_num">
         <transmission name="${prefix}_joint_${'%02d' % joint_num}_trans">
