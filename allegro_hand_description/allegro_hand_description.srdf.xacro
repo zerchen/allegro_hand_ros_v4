@@ -60,6 +60,8 @@
     </xacro:macro>
 
     <xacro:macro name="allegro_hand_autocol" params="prefix">
+        <disable_collisions link1="${prefix}_ur5_attachment" link2="${prefix}_palm_link" reason="Never"/>
+
         <disable_collisions link1="${prefix}_palm_link" link2="${prefix}_link_00" reason="Never"/>
         <disable_collisions link1="${prefix}_palm_link" link2="${prefix}_link_04" reason="Never"/>
         <disable_collisions link1="${prefix}_palm_link" link2="${prefix}_link_08" reason="Never"/>
@@ -88,6 +90,8 @@
     </xacro:macro>
 
     <xacro:macro name="allegro_hand_col_with" params="prefix link">
+        <disable_collisions link1="${prefix}_ur5_attachment" link2="${link}" reason="Never"/>
+
         <disable_collisions link1="${prefix}_palm_link" link2="${link}" reason="Never"/>
 
         <disable_collisions link1="${prefix}_link_00" link2="${link}" reason="Never"/>
