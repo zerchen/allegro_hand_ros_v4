@@ -69,7 +69,7 @@
     <link name="${prefix}_palm_link">
         <visual>
             <geometry>
-                <mesh filename="package://allegro_hand_description/meshes/hand_visuals/base_link_${suffix}.stl"/>
+                <mesh filename="package://allegro_hand_description/meshes/hand/base_link_${suffix}.stl"/>
             </geometry>
             <origin rpy="0 0 0" xyz="0 0 0 "/>
             <material name="black">
@@ -101,7 +101,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+0)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_12_${suffix}.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_12_${suffix}.stl"/>
                 </geometry>
                 <material name="black">
                     <color rgba=".2 .2 .2 1"/>
@@ -141,7 +141,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+1)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_13.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_13.stl"/>
                 </geometry>
                 <material name="black">
                     <color rgba=".2 .2 .2 1"/>
@@ -179,7 +179,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+2)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_14.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_14.stl"/>
                 </geometry>
                 <material name="black">
                 </material>
@@ -215,7 +215,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_15.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_15.stl"/>
                 </geometry>
                 <material name="black">
                 </material>
@@ -252,7 +252,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}_tip">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_15_tip.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_15_tip.stl"/>
                 </geometry>
                 <material name="white">
                     <color rgba=".9 .9 .9 1"/>
@@ -291,7 +291,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+0)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_0.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_0.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -328,7 +328,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+1)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_1.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_1.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -363,7 +363,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+2)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_2.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_2.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -399,7 +399,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_3.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_3.stl"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -435,7 +435,7 @@
         <link name="${prefix}_link_${'%02d' % (finger_num*4+3)}_tip">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/hand_visuals/link_3_tip.stl"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_3_tip.stl"/>
                 </geometry>
                 <material name="white">
                     <color rgba=".9 .9 .9 1"/>
@@ -506,7 +506,7 @@
         <link name="${prefix}_ur5_attachment">
             <visual>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/support_visuals/UR5_attachment.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
                 <material name="grey">
                     <color rgba=".7 .7 .7 1"/>
@@ -515,10 +515,10 @@
 
             <collision>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/support_visuals/UR5_attachment_bottom_collision.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment_bottom_collision.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/support_visuals/UR5_attachment_top_collision.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment_top_collision.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </collision>
 
