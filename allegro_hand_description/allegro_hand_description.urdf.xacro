@@ -71,18 +71,17 @@
             <geometry>
                 <mesh filename="package://allegro_hand_description/meshes/hand/base_link_${suffix}.stl"/>
             </geometry>
-            <origin rpy="0 0 0" xyz="0 0 0 "/>
             <material name="black">
                 <color rgba="0.2 0.2 0.2 1"/>
             </material>
         </visual>
 
         <collision>
-            <origin rpy="0 0 0" xyz="${palm_link_x} 0 -${palm_link_z/2}"/>
             <geometry>
-                <box size="0.0408 0.1130 ${palm_link_z}"/>
+                <mesh filename="package://allegro_hand_description/meshes/hand/base_link_${suffix}_collision.stl"/>
             </geometry>
         </collision>
+
         <inertial>
         <origin xyz="0 0 ${palm_link_z/2}" rpy="0 0 0"/>
         <mass value="0.4154"/>
@@ -111,9 +110,9 @@
 
             <collision>
                 <geometry>
-                    <box size="${link0_t_x} ${link0_t_y} ${link0_t_z}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_12_${suffix}_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="${-0.0358/2+0.0} ${minus_left * 0.018/2} ${.029/2}"/>
+                <origin rpy="${zero_right * 180*DEG2RAD} 0 0" xyz="0 0 0"/>
             </collision>
 
             <inertial>
@@ -149,10 +148,9 @@
             </visual>
 
             <collision>
-                <geometry>
-                    <box size="${links_x} ${links_y} ${link1_t_z}"/>
+                 <geometry>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_13_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="0 0 ${link1_t_z/2}"/>
             </collision>
 
             <inertial>
@@ -187,9 +185,8 @@
 
             <collision>
                 <geometry>
-                    <box size="${links_x} ${links_y} ${link2_t_z}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_14_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="0 0 ${link2_t_z/2}"/>
             </collision>
 
             <inertial>
@@ -223,9 +220,8 @@
 
             <collision>
                 <geometry>
-                    <box size="${links_x} ${links_y} ${link3_t_z-fingerTip_r}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_15_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="0 0 ${(link3_t_z-fingerTip_r)/2}"/>
             </collision>
 
             <inertial>
@@ -261,9 +257,8 @@
 
             <collision>
                 <geometry>
-                    <sphere radius="${fingerTip_r}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_15_tip_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="0 0 0"/>
             </collision>
 
             <inertial>
@@ -298,9 +293,8 @@
 
             <collision>
                 <geometry>
-                    <box size="${links_x} ${links_y} ${link0_z}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_0_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="0 0 ${link0_z/2}"/>
             </collision>
 
             <inertial>
@@ -335,10 +329,10 @@
 
             <collision>
                 <geometry>
-                    <box size="${links_x} ${links_y} ${link1_z}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_1_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="0 0 ${link1_z/2}"/>
             </collision>
+
             <inertial>
             <mass value="0.065" />
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -370,9 +364,8 @@
 
             <collision>
                 <geometry>
-                    <box size="${links_x} ${links_y} ${link2_z}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_2_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="0 0 ${link2_z/2}"/>
             </collision>
 
             <inertial>
@@ -406,9 +399,8 @@
 
             <collision>
                 <geometry>
-                    <box size="${links_x} ${links_y} ${link3_z-fingerTip_r}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_3_collision.stl"/>
                 </geometry>
-                <origin rpy="0 0 0" xyz="0 0 ${(link3_z-fingerTip_r)/2}"/>
             </collision>
 
             <inertial>
@@ -444,7 +436,7 @@
 
             <collision>
                 <geometry>
-                    <sphere radius="${fingerTip_r}"/>
+                    <mesh filename="package://allegro_hand_description/meshes/hand/link_3_tip_collision.stl"/>
                 </geometry>
             </collision>
 
