@@ -519,6 +519,8 @@
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment_bottom_collision.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
+            </collision>
+            <collision>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment_top_collision.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
@@ -548,6 +550,8 @@
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/support/Allegro_deskstand_bottom_collision.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
+            </collision>
+            <collision>
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/support/Allegro_deskstand_top_collision.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
