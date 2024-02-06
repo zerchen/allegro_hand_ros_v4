@@ -72,7 +72,7 @@
                 <mesh filename="package://allegro_hand_description/meshes/hand/base_link_${suffix}.stl"/>
             </geometry>
             <material name="black">
-                <color rgba="0.2 0.2 0.2 1"/>
+                <color rgba=".2 .2 .2 1"/>
             </material>
         </visual>
 
@@ -83,12 +83,12 @@
         </collision>
 
         <inertial>
-        <origin xyz="0 0 ${palm_link_z/2}" rpy="0 0 0"/>
-        <mass value="0.4154"/>
-        <inertia
-            ixx="1e-4" ixy="0.0" ixz="0.0"
-            iyy="1e-4" iyz="0.0"
-            izz="1e-4"/>
+            <origin xyz="0 0 ${palm_link_z/2}" rpy="0 0 0"/>
+            <mass value="0.4154"/>
+            <inertia
+                ixx="1e-4" ixy="0.0" ixz="0.0"
+                iyy="1e-4" iyz="0.0"
+                izz="1e-4"/>
         </inertial>
     </link>
 
@@ -116,11 +116,11 @@
             </collision>
 
             <inertial>
-            <mass value="0.0176" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="1.892e-05" ixy="7.167e-06" ixz="5.355e-06"
-                     iyy="1.430e-05" iyz="6.806e-06"
-                     izz="1.892e-05" />
+                <mass value="0.0176" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="1.892e-05" ixy="7.167e-06" ixz="5.355e-06"
+                        iyy="1.430e-05" iyz="6.806e-06"
+                        izz="1.892e-05" />
             </inertial>
         </link>
 
@@ -154,11 +154,11 @@
             </collision>
 
             <inertial>
-            <mass value="0.0119" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="4.242e-06" ixy="1.032e-06" ixz="1.603e-06"
-                     iyy="4.523e-06" iyz="1.448e-06"
-                     izz="4.242e-06" />
+                <mass value="0.0119" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="4.242e-06" ixy="1.032e-06" ixz="1.603e-06"
+                        iyy="4.523e-06" iyz="1.448e-06"
+                        izz="4.242e-06" />
             </inertial>
         </link>
 
@@ -180,6 +180,7 @@
                     <mesh filename="package://allegro_hand_description/meshes/hand/link_14.stl"/>
                 </geometry>
                 <material name="black">
+                    <color rgba=".2 .2 .2 1"/>
                 </material>
             </visual>
 
@@ -190,10 +191,10 @@
             </collision>
 
             <inertial>
-            <mass value="0.038" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="4.304e-05" ixy="9.570e-06" ixz="5.120e-06" iyy="1.444e-05"
-                     iyz="1.342e-05" izz="4.304e-05" />
+                <mass value="0.038" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="4.304e-05" ixy="9.570e-06" ixz="5.120e-06" iyy="1.444e-05"
+                        iyz="1.342e-05" izz="4.304e-05" />
             </inertial>
         </link>
 
@@ -215,6 +216,7 @@
                     <mesh filename="package://allegro_hand_description/meshes/hand/link_15.stl"/>
                 </geometry>
                 <material name="black">
+                    <color rgba=".2 .2 .2 1"/>
                 </material>
             </visual>
 
@@ -225,11 +227,11 @@
             </collision>
 
             <inertial>
-            <mass value="0.0388" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="${last_links_inertia_factor * 3.292e-05}" ixy="${last_links_inertia_factor * 8.042e-06}" ixz="${last_links_inertia_factor * 5.228e-06}"
-                     iyy="${last_links_inertia_factor * 1.474e-05}" iyz="${last_links_inertia_factor * 1.128e-05}"
-                     izz="${last_links_inertia_factor * 3.292e-05}" />
+                <mass value="0.0388" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="${last_links_inertia_factor * 3.292e-05}" ixy="${last_links_inertia_factor * 8.042e-06}" ixz="${last_links_inertia_factor * 5.228e-06}"
+                        iyy="${last_links_inertia_factor * 1.474e-05}" iyz="${last_links_inertia_factor * 1.128e-05}"
+                        izz="${last_links_inertia_factor * 3.292e-05}" />
             </inertial>
         </link>
 
@@ -262,11 +264,11 @@
             </collision>
 
             <inertial>
-            <mass value="0.0168" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="${last_links_inertia_factor * 9.680e-07}" ixy="0.0" ixz="0.0"
-                     iyy="${last_links_inertia_factor * 9.680e-07}" iyz="0.0"
-                     izz="${last_links_inertia_factor * 9.680e-07}" />
+                <mass value="0.0168" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="${last_links_inertia_factor * 9.680e-07}" ixy="0.0" ixz="0.0"
+                        iyy="${last_links_inertia_factor * 9.680e-07}" iyz="0.0"
+                        izz="${last_links_inertia_factor * 9.680e-07}" />
             </inertial>
         </link>
 
@@ -288,7 +290,9 @@
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/hand/link_0.stl"/>
                 </geometry>
-                <material name="black"/>
+                <material name="black">
+                    <color rgba=".2 .2 .2 1"/>
+                </material>
             </visual>
 
             <collision>
@@ -298,11 +302,11 @@
             </collision>
 
             <inertial>
-            <mass value="0.0119" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="1.016e-06" ixy="0.0" ixz="0.0"
-                     iyy="6.476e-07" iyz="0.0"
-                     izz="1.016e-06" />
+                <mass value="0.0119" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="1.016e-06" ixy="0.0" ixz="0.0"
+                        iyy="6.476e-07" iyz="0.0"
+                        izz="1.016e-06" />
             </inertial>
         </link>
 
@@ -324,7 +328,9 @@
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/hand/link_1.stl"/>
                 </geometry>
-                <material name="black"/>
+                <material name="black">
+                    <color rgba=".2 .2 .2 1"/>
+                </material>
             </visual>
 
             <collision>
@@ -334,11 +340,11 @@
             </collision>
 
             <inertial>
-            <mass value="0.065" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="7.956e-05" ixy="1.719e-05" ixz="8.758e-06"
-                     iyy="2.470e-05" iyz="2.413e-05"
-                     izz="7.956e-05" />
+                <mass value="0.065" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="7.956e-05" ixy="1.719e-05" ixz="8.758e-06"
+                        iyy="2.470e-05" iyz="2.413e-05"
+                        izz="7.956e-05" />
             </inertial>
         </link>
 
@@ -359,7 +365,9 @@
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/hand/link_2.stl"/>
                 </geometry>
-                <material name="black"/>
+                <material name="black">
+                    <color rgba=".2 .2 .2 1"/>
+                </material>
             </visual>
 
             <collision>
@@ -369,11 +377,11 @@
             </collision>
 
             <inertial>
-            <mass value="0.0355" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="${last_links_inertia_factor * 2.639e-05}" ixy="${last_links_inertia_factor * 6.679e-06}" ixz="${last_links_inertia_factor * 4.783e-06}"
-                     iyy="${last_links_inertia_factor * 1.349e-05}" iyz="${last_links_inertia_factor * 9.372e-06}"
-                     izz="${last_links_inertia_factor * 2.639e-05}" />
+                <mass value="0.0355" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="${last_links_inertia_factor * 2.639e-05}" ixy="${last_links_inertia_factor * 6.679e-06}" ixz="${last_links_inertia_factor * 4.783e-06}"
+                        iyy="${last_links_inertia_factor * 1.349e-05}" iyz="${last_links_inertia_factor * 9.372e-06}"
+                        izz="${last_links_inertia_factor * 2.639e-05}" />
             </inertial>
         </link>
 
@@ -394,7 +402,9 @@
                 <geometry>
                     <mesh filename="package://allegro_hand_description/meshes/hand/link_3.stl"/>
                 </geometry>
-                <material name="black"/>
+                <material name="black">
+                    <color rgba=".2 .2 .2 1"/>
+                </material>
             </visual>
 
             <collision>
@@ -404,11 +414,11 @@
             </collision>
 
             <inertial>
-            <mass value="0.0096" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="${last_links_inertia_factor * 4.701e-06}" ixy="${last_links_inertia_factor * 1.255e-06}" ixz="${last_links_inertia_factor * 1.293e-06}"
-                     iyy="${last_links_inertia_factor * 3.649e-06}" iyz="${last_links_inertia_factor * 1.762e-06}"
-                     izz="${last_links_inertia_factor * 4.701e-06}" />
+                <mass value="0.0096" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="${last_links_inertia_factor * 4.701e-06}" ixy="${last_links_inertia_factor * 1.255e-06}" ixz="${last_links_inertia_factor * 1.293e-06}"
+                        iyy="${last_links_inertia_factor * 3.649e-06}" iyz="${last_links_inertia_factor * 1.762e-06}"
+                        izz="${last_links_inertia_factor * 4.701e-06}" />
             </inertial>
         </link>
 
@@ -442,10 +452,10 @@
 
             <inertial>
             <mass value="0.0168" />
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="${last_links_inertia_factor * 9.680e-07}" ixy="0.0" ixz="0.0"
-                     iyy="${last_links_inertia_factor * 9.680e-07}" iyz="0.0"
-                     izz="${last_links_inertia_factor * 9.680e-07}" />
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <inertia ixx="${last_links_inertia_factor * 9.680e-07}" ixy="0.0" ixz="0.0"
+                        iyy="${last_links_inertia_factor * 9.680e-07}" iyz="0.0"
+                        izz="${last_links_inertia_factor * 9.680e-07}" />
             </inertial>
         </link>
 
