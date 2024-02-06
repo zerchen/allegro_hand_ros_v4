@@ -537,17 +537,20 @@
     <xacro:if value="${desk_stand}">
         <link name="${prefix}_desk_stand">
             <visual>
+                <geometry>
+                    <mesh filename="package://allegro_hand_description/meshes/support/Allegro_deskstand.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
                 <material name="grey">
-                    <color rgba=".7 .7 .7 1"/>
+                    <color rgba=".8 .8 .8 1"/>
                 </material>
             </visual>
 
             <collision>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment_bottom_collision.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="package://allegro_hand_description/meshes/support/Allegro_deskstand_bottom_collision.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
                 <geometry>
-                    <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment_top_collision.stl" scale="0.001 0.001 0.001"/>
+                    <mesh filename="package://allegro_hand_description/meshes/support/Allegro_deskstand_top_collision.stl" scale="0.001 0.001 0.001"/>
                 </geometry>
             </collision>
 
@@ -579,7 +582,7 @@
         <joint name="${prefix}_desk_stand_joint" type="fixed">
             <parent link="${prefix}_desk_stand"/>
             <child link="${prefix}_base_screws"/>
-            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <origin rpy="0 0 0" xyz="0 0 0.119"/>
         </joint>
 
         <!-- And ur5 attachment -->
