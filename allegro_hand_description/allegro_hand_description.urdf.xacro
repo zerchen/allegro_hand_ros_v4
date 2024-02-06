@@ -501,7 +501,9 @@
             finger_angle_y="${minus_right * 90*DEG2RAD}"
             />
 
-    <!-- ================================== SUPPORT ================================== -->
+    <!-- ================================== SUPPORTS ================================== -->
+    <link name="${prefix}_base_screws"/>
+
     <xacro:if value="${ur5_attachment}">
         <link name="${prefix}_ur5_attachment">
             <visual>
@@ -530,19 +532,91 @@
                                                       izz="1.2e-04" />
             </inertial>
         </link>
-
-        <joint name="${prefix}_ur5_attachment_joint" type="fixed">
-            <parent link="${prefix}_ur5_attachment"/>
-            <child link="${prefix}_palm_link"/>
-            <origin rpy="0 0 ${90*deg2rad}" xyz="0 ${-palm_link_x} ${0.05+palm_link_z}"/>
-        </joint>
-
-        <joint name="${prefix}_palm_joint" type="fixed">
-                    <parent link="${parent}"/>
-                    <child link="${prefix}_ur5_attachment"/>
-                    <xacro:insert_block name="origin"/>
-        </joint>
     </xacro:if>
+
+    <xacro:if value="${desk_stand}">
+        <link name="${prefix}_desk_stand">
+            <visual>
+                <material name="grey">
+                    <color rgba=".7 .7 .7 1"/>
+                </material>
+            </visual>
+
+            <collision>
+                <geometry>
+                    <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment_bottom_collision.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <geometry>
+                    <mesh filename="package://allegro_hand_description/meshes/support/UR5_attachment_top_collision.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <mass value="0.200" />
+                <origin xyz="0 -2.4e-04 1.5e-02" rpy="0 0 0"/>
+                <inertia ixx="1.0e-04" ixy="0"        ixz="0"
+                                       iyy="1.0e-04"  iyz="-4.0e-07"
+                                                      izz="1.2e-04" />
+            </inertial>
+        </link>
+    </xacro:if>
+
+
+<!-- ================================== ORIGIN ================================== -->
+    <joint name="${prefix}_base_screws_joint" type="fixed">
+        <parent link="${prefix}_base_screws"/>
+        <child link="${prefix}_palm_link"/>
+        <origin rpy="0 0 ${90*DEG2RAD}" xyz="0 ${-palm_link_x} ${palm_link_z}"/>
+    </joint>
+
+    <!-- Desk stand -->
+    <xacro:if value="${desk_stand}">
+        <joint name="${prefix}_parent_joint" type="fixed">
+            <parent link="${parent}"/>
+            <child link="${prefix}_desk_stand"/>
+            <xacro:insert_block name="origin"/>
+        </joint>
+        <joint name="${prefix}_desk_stand_joint" type="fixed">
+            <parent link="${prefix}_desk_stand"/>
+            <child link="${prefix}_base_screws"/>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+        </joint>
+
+        <!-- And ur5 attachment -->
+        <xacro:if value="${ur5_attachment}">
+            <joint name="${prefix}_ur5_attachment" type="fixed">
+                <parent link="${prefix}_base_screws"/>
+                <child link="${prefix}_ur5_attachment"/>
+                <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+            </joint>
+
+        </xacro:if>
+    </xacro:if>
+    <!-- No desk stand -->
+    <xacro:unless value="${desk_stand}">
+        <!-- But UR5 attachmet -->
+        <xacro:if value="${ur5_attachment}">
+            <joint name="${prefix}_ur5_attachment_joint" type="fixed">
+                <parent link="${prefix}_ur5_attachment"/>
+                <child link="${prefix}_base_screws"/>
+                <origin rpy="0 0 0" xyz="0 0 0.05"/>
+            </joint>
+            <joint name="${prefix}_parent_joint" type="fixed">
+                <parent link="${parent}"/>
+                <child link="${prefix}_ur5_attachment"/>
+                <xacro:insert_block name="origin"/>
+            </joint>
+
+        </xacro:if>
+        <!-- Nothing -->
+        <xacro:unless value="${ur5_attachment}">
+            <joint name="${prefix}_parent_joint" type="fixed">
+                <parent link="${parent}"/>
+                <child link="${prefix}_base_screws"/>
+                <xacro:insert_block name="origin"/>
+            </joint>
+        </xacro:unless>
+    </xacro:unless>
 
     <!-- ============================= GAZEBO SIMULATION ============================= -->
 
