@@ -32,7 +32,7 @@ The second launch file is for visualization, it is included in `allegro_hand.lau
 
     roslaunch allegro_hand_controllers allegro_viz.launch CHIRALITY:=right
 
-Packages
+Packages and installation
 --------
 
  * **allegro_hand** Contains launchfiles to start everything easily.
@@ -41,6 +41,11 @@ Packages
  * **allegro_hand_description** xacro descriptions for the kinematics of the
      hand, rviz configuration and meshes.
 * **allegro_hand_ros_v4** Empty meta-package to compile all the above package conveniently (i.e. `catkin build allegro_hand_ros_v4` build all of them).
+
+**Note:** If you intend to use this package in simulation only (with gazebo), it is recommended to add **allegro_hand_driver** and **allegro_hand_controllers** in your catkin `--skiplist`. They are useless for the simulation and require hardware related libraries to be installed manually... (if your are using catkin `--buildlist` you can, likewise, only add  **allegro_hand_description** package to the list).
+```bash
+catkin config --skiplist <packages already in the skiplist> allegro_hand_controllers allegro_hand_driver
+```
 
 Note on polling (from Wonik Robotics): The preferred sampling method is utilizing the Hand's own real time clock running @ 333Hz by polling the CAN communication. In fact, ROS's interrupt/sleep combination might cause instability in CAN communication resulting unstable hand motions.
 
@@ -67,8 +72,9 @@ Known Issues:
 While all parameters defining the hand's motor/encoder directions and offsets fall under the enumerated "allegroHand_#" namespaces, the parameter "robot_description" defining the kinematic structure and joint limits remains global. When launching a second hand, this parameter is overwritten. A fix must be found when the problem will occur.
 
 
-Installing the PCAN driver
+Installing the PCAN driver (for using the real robot only)
 --------------------------
+**Note:** It is recommended to not follow this section of the tutorial if you do not intend to control the real Allegro Hand robot with your machine.
 
 Before using the hand, you must install the pcan drivers. This assumes you have a peak-systems pcan to usb (or pcan to PCI) adapter.
 
