@@ -635,7 +635,6 @@
             </joint>
             <actuator name="${prefix}_joint_${'%02d' % joint_num}_motor">
                 <mechanicalReduction>1</mechanicalReduction>
-                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             </actuator>
         </transmission>
     </xacro:macro>
