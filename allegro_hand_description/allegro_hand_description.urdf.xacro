@@ -126,7 +126,7 @@
 
         <joint name="${prefix}_joint_${'%02d' % (finger_num*4+0)}" type="revolute">
             <axis xyz="${minus_right} 0 0"/>
-            <limit effort="0.71" velocity="0.12"
+            <limit effort="0.71" velocity="9.5"
                 lower="${limit_0_t_low+joint_safety_margin}"
                 upper="${limit_0_t_up-joint_safety_margin}"/>
             <parent link="${prefix}_palm_link"/>
@@ -164,7 +164,7 @@
 
         <joint name="${prefix}_joint_${'%02d' % (finger_num*4+1)}" type="revolute">
             <axis xyz="0 0 ${minus_left}"/>
-            <limit effort="0.71" velocity="0.12"
+            <limit effort="0.71" velocity="9.5"
                 lower="${limit_1_t_low+joint_safety_margin}"
                 upper="${limit_1_t_up-joint_safety_margin}"/>
             <parent link="${prefix}_link_${'%02d' % (finger_num*4+0)}"/>
@@ -200,7 +200,7 @@
 
         <joint name="${prefix}_joint_${'%02d' % (finger_num*4+2)}" type="revolute">
             <axis xyz="0 1 0"/>
-            <limit effort="0.71" velocity="0.12"
+            <limit effort="0.71" velocity="9.5"
                 lower="${limit_2_t_low+joint_safety_margin}"
                 upper="${limit_2_t_up-joint_safety_margin}"/>
             <parent link="${prefix}_link_${'%02d' % (finger_num*4+1)}"/>
@@ -237,7 +237,7 @@
 
         <joint name="${prefix}_joint_${'%02d' % (finger_num*4+3)}" type="revolute">
             <axis xyz="0 1 0"/>
-            <limit effort="0.71" velocity="0.12"
+            <limit effort="0.71" velocity="9.5"
                 lower="${limit_3_t_low+joint_safety_margin}"
                 upper="${limit_3_t_up-joint_safety_margin}"/>
             <parent link="${prefix}_link_${'%02d' % (finger_num*4+2)}"/>
@@ -312,7 +312,7 @@
 
         <joint name="${prefix}_joint_${'%02d' % (finger_num*4+0)}" type="revolute">
             <axis xyz="0 0 1"/>
-            <limit effort="0.71" velocity="0.12"
+            <limit effort="0.71" velocity="9.5"
                 lower="${limit_0_low+joint_safety_margin}"
                 upper="${limit_0_up-joint_safety_margin}"/>
             <parent link="${prefix}_palm_link"/>
@@ -349,7 +349,7 @@
         </link>
 
         <joint name="${prefix}_joint_${'%02d' % (finger_num*4+1)}" type="revolute">
-            <limit effort="0.71" velocity="0.12"
+            <limit effort="0.71" velocity="9.5"
                 lower="${limit_1_low+joint_safety_margin}"
                 upper="${limit_1_up-joint_safety_margin}"/>
             <axis xyz="0 1 0"/>
@@ -387,7 +387,7 @@
 
         <joint name="${prefix}_joint_${'%02d' % (finger_num*4+2)}" type="revolute">
             <axis xyz="0 1 0"/>
-            <limit effort="0.71" velocity="0.12"
+            <limit effort="0.71" velocity="9.5"
                 lower="${limit_2_low+joint_safety_margin}"
                 upper="${limit_2_up-joint_safety_margin}"/>
             <parent link="${prefix}_link_${'%02d' % (finger_num*4+1)}"/>
@@ -424,7 +424,7 @@
 
         <joint name="${prefix}_joint_${'%02d' % (finger_num*4+3)}" type="revolute">
             <axis xyz="0 1 0"/>
-            <limit effort="0.71" velocity="0.12"
+            <limit effort="0.71" velocity="9.5"
                 lower="${limit_3_low+joint_safety_margin}"
                 upper="${limit_3_up-joint_safety_margin}"/>
             <parent link="${prefix}_link_${'%02d' % (finger_num*4+2)}"/>
@@ -659,7 +659,7 @@
     <gazebo>
     <plugin name="${prefix}_ros_control" filename="libgazebo_ros_control_select_joints.so">
         <robotNamespace>/${prefix}</robotNamespace>
-        <legacyModeNS>true</legacyModeNS>
+        <legacyModeNS>false</legacyModeNS>
         <joints>
             ${prefix}_joint_00
             ${prefix}_joint_01
