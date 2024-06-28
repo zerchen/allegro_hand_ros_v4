@@ -16,6 +16,7 @@
     <run_depend>allegro_hand_description</run_depend>
     <run_depend>allegro_hand_driver</run_depend>
     <run_depend>allegro_hand_parameters</run_depend>
+    <run_depend>allegro_hand_keyboard</run_depend>
     <run_depend>libpcan</run_depend>
 
     <!-- The export tag contains other, unspecified, tags -->
