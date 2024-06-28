@@ -53,7 +53,3 @@ install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.h"
 )
-
-## Auto detect CAN interface
-catkin_install_python(PROGRAMS scripts/detect_pcan.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

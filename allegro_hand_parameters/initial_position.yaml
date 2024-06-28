@@ -1,0 +1,20 @@
+# Initial Position used in the PD and Velocity Saturation Joint Space Controllers
+
+# Home Position
+initial_position:
+ j00: 0.0
+ j01: 0.0
+ j02: 0.0
+ j03: 0.0
+ j10: 0.0
+ j11: 0.0
+ j12: 0.0
+ j13: 0.0
+ j20: 0.0
+ j21: 0.0
+ j22: 0.0
+ j23: 0.0
+ j30: 0.0
+ j31: 0.0
+ j32: 0.0
+ j33: 0.0

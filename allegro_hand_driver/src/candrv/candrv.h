@@ -2,7 +2,6 @@
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2019, Wonik Robotics.
- *  Copyright (c) 2023, INRIA.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -33,7 +32,20 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef __ALLEGROHAND_CANDRV_H__
+#define __ALLEGROHAND_CANDRV_H__
+
+/*
+ *  @file candrv.h
+ *  @brief API for communication over CAN bus
+ *  @detailed The API for communicating with the various motor controllers
+ *          over the CAN bus interface on the robot hand
+ *
+ *  Created on:         July 29, 2016
+ *  Added to Project: 	July 29, 2016
+ *  Author:             Sean Yi
+ *  Maintained by:      Sean Yi(seanyi@wonikrobotics.com)
+ */
 
 #include "candef.h"
 
@@ -222,7 +234,6 @@ int can_write_message(void* ch, int id, int len, unsigned char* data, int blocki
 /**
  * @brief can_read_message
  * @param ch
- * @param timestamp_us
  * @param id
  * @param len
  * @param data
@@ -230,6 +241,8 @@ int can_write_message(void* ch, int id, int len, unsigned char* data, int blocki
  * @param timeout_usec
  * @return
  */
-int can_read_message(void* ch,uint64_t *timestamp_us, int* id, int* len, unsigned char* data, int blocking, int timeout_usec);
+int can_read_message(void* ch, int* id, int* len, unsigned char* data, int blocking, int timeout_usec);
 
 CANAPI_END
+
+#endif // __ALLEGROHAND_CANDRV_H__

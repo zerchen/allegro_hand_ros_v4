@@ -2,7 +2,6 @@
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2016, Wonik Robotics.
- *  Copyright (c) 2023, INRIA.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -33,56 +32,64 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+/*
+ *  @file AllegroHandDrv.h
+ *  @brief Allegro Hand Driver
+ *
+ *  Created on:         July 29, 2016
+ *  Added to Project:   July 29, 2016
+ *  Author:             Sean Yi
+ *  Maintained by:      Sean Yi(seanyi@wonikrobotics.com)
+ */
+#ifndef __ALLEGROHAND_DRV_H__
+#define __ALLEGROHAND_DRV_H__
 
 #include <fcntl.h>
 #include <list>
 #include <string>
 #include "AllegroHandDef.h"
-#include "FilteredDerivative.h"
+#include "ros/ros.h"
 
 namespace allegro
 {
 
 class AllegroHandDrv
 {
-
-using JointFilt = FilteredDerivative<uint64_t, double>;
-
 public:
     AllegroHandDrv();
     ~AllegroHandDrv();
 
-    bool init(std::string can_ch);  ///< initialize Allegro Hand driver and CAN channel
+    bool init(int mode = 0);                ///< initialize Allegro Hand driver and CAN channel
 
-    void setTorque(double *torque);                        ///< set desired joint torque
-    void getJointInfo(double *position, double *velocity); ///< get current joint position
+    void setTorque(double *torque);         ///< set desired joint torque
+    void getJointInfo(double *position);    ///< get current joint position
 
-    bool emergencyStop() { return _emergency_stop; }     ///< whether emergency is activated
-    double torqueConversion() { return _tau_cov_const; } ///< get torque conversion constant
-    double inputVoltage() { return _input_voltage; }     ///< get input voltage of this system
+    bool emergencyStop() { return _emergency_stop; }        ///< whether emergency is activated
+    double torqueConversion() { return _tau_cov_const; }    ///< get torque conversion constant
+    double inputVoltage() { return _input_voltage; }        ///< get input voltage of this system
 
-    int readCANFrames();        ///< try to read CAN frames (user code should call this fast enough)
-    int writeJointTorque();     ///< send joint command via CAN comm
-    bool isJointInfoReady();    ///< return whether all joint positions are updated
-    void resetJointInfoReady(); ///< reset joint position update flag
+    int readCANFrames();                    ///< try to read CAN frames (user code should call this fast enough)
+    int writeJointTorque();                 ///< send joint command via CAN comm
+    bool isJointInfoReady();                ///< return whether all joint positions are updated
+    void resetJointInfoReady();             ///< reset joint position update flag
 
 private:
-    void* _can_handle; ///< CAN device(driver) handle
+    void* _can_handle;                      ///< CAN device(driver) handle
 
-    JointFilt _curr_joint_values[DOF_JOINTS]; ///< Structure holding current joint values : position (rad), velocities (rad/s) and filter them.
-    double _desired_position[DOF_JOINTS];     ///< desired joint position (radian)
-    double _desired_torque[DOF_JOINTS];       ///< desired joint torque (Nm)
+    double _curr_position[DOF_JOINTS];      ///< current joint position (radian)
+    double _curr_torque[DOF_JOINTS];        ///< current joint torque (Nm)
+    double _desired_position[DOF_JOINTS];   ///< desired joint position (radian)
+    double _desired_torque[DOF_JOINTS];     ///< desired joint torque (Nm)
 
-    double _hand_version;  ///< hand version
-    double _tau_cov_const; ///< constant to convert joint torque to pwm command
-    double _input_voltage; ///< input voltage
+    double _hand_version;                   ///< hand version
+    double _tau_cov_const;                  ///< constant to convert joint torque to pwm command
+    double _input_voltage;                  ///< input voltage
 
     int _curr_position_get;                 ///< bit flag telling which joint positions are updated (0x01:index 0x02:middle 0x04:pinky 0x08:thumb)
 
     double _pwm_max_global;                 ///< global max value of PWM command is limited by the input voltage
     double _pwm_max[DOF_JOINTS];            ///< max value of PWM command of each joint
-    int    _encoder_offset[DOF_JOINTS];     ///< encoder offset
+    double _encoder_offset[DOF_JOINTS];     ///< encoder offset
     int    _encoder_direction[DOF_JOINTS];  ///< encoder direction
     int    _motor_direction[DOF_JOINTS];    ///< motor direction
 
@@ -91,7 +98,10 @@ private:
 private:
     void _readDevices();                    ///< read CAN messages
     void _writeDevices();                   ///< write CAN messages(torque command)
-    void _parseMessage(uint64_t timestamp_us, int id, int len, unsigned char* data); ///< parse CAN messages and calculate current joint angles from encoder values
+    //void _parseMessage(char cmd, char src, char des, int len, unsigned char* data); ///< parse CAN messages and calculate current joint angles from encoder values
+    void _parseMessage(int id, int len, unsigned char* data);
 };
 
 }
+
+#endif // __ALLEGROHAND_DRV_H__

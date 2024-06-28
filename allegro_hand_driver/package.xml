@@ -6,7 +6,7 @@
     ROS stack for SimLab's Allegro Hand.
   </description>
 
-  <maintainer email="etienne.arlaud@inria.fr">EtienneAr</maintainer>
+  <maintainer email="seanyi@wonikrobotics.com">Sean Yi</maintainer>
 
   <license>BSD</license>
   <url>http://ros.org/wiki/AllegroHandStack</url>

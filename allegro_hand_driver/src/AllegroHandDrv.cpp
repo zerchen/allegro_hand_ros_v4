@@ -2,7 +2,6 @@
  * Software License Agreement (BSD License)
  *
  *  Copyright (c) 2016, Wonik Robotics.
- *  Copyright (c) 2023, INRIA.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -33,6 +32,16 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*
+ *  @file AllegroHandDrv.cpp
+ *  @brief Allegro Hand Driver
+ *
+ *  Created on:         Nov 15, 2012
+ *  Added to Project:   Jan 17, 2013
+ *  Author:             Sean Yi, K.C.Chang, Seungsu Kim, & Alex Alspach
+ *  Maintained by:      Sean Yi(seanyi@wonikrobotics.com)
+ */
+
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
@@ -59,7 +68,6 @@ using namespace std;
 #define PWM_LIMIT_GLOBAL_24V 500.0
 #define PWM_LIMIT_GLOBAL_12V 1200.0
 
-#define FILTER_TIME_CONSTANT_US 15e3 // Filter smooth on ~15ms
 
 namespace allegro
 {
@@ -69,9 +77,6 @@ AllegroHandDrv::AllegroHandDrv()
     , _curr_position_get(0)
     , _emergency_stop(false)
 {
-    for(int i=0;i<DOF_JOINTS;i++) {
-        _curr_joint_values[i].set_time_constant(FILTER_TIME_CONSTANT_US);
-    }
     ROS_INFO("AllegroHandDrv instance is constructed.");
 }
 
@@ -86,14 +91,27 @@ AllegroHandDrv::~AllegroHandDrv()
     }
 }
 
-bool AllegroHandDrv::init(std::string can_ch)
+// trim from end. see http://stackoverflow.com/a/217605/256798
+static inline std::string &rtrim(std::string &s)
 {
-    if (can_ch.empty()) {
+    s.erase(std::find_if(
+        s.rbegin(), s.rend(),
+        std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
+bool AllegroHandDrv::init(int mode)
+{
+    string CAN_CH;
+    ros::param::get("~comm/CAN_CH", CAN_CH);
+    rtrim(CAN_CH);  // Ensure the ROS parameter has no trailing whitespace.
+
+    if (CAN_CH.empty()) {
         ROS_ERROR("Invalid (empty) CAN channel, cannot proceed. Check PCAN comms.");
         return false;
     }
 
-    if (CANAPI::command_can_open_with_name(_can_handle, can_ch.c_str())) {
+    if (CANAPI::command_can_open_with_name(_can_handle, CAN_CH.c_str())) {
         _can_handle = 0;
         return false;
     }
@@ -186,26 +204,24 @@ void AllegroHandDrv::setTorque(double *torque)
     }
 }
 
-void AllegroHandDrv::getJointInfo(double *position, double *velocity)
+void AllegroHandDrv::getJointInfo(double *position)
 {
     for (int i = 0; i < DOF_JOINTS; i++) {
-        position[i] = _curr_joint_values[i].get_value_filtered();
-        velocity[i] = 1e6 * _curr_joint_values[i].get_derivative_filtered(); // 1e6 * to correct for us timestamps.
+        position[i] = _curr_position[i];
     }
 }
 
 void AllegroHandDrv::_readDevices()
 {
     int err;
-    uint64_t t;
-    int id;
+    int id;    
     int len;
     unsigned char data[8];
 
-    err = CANAPI::can_read_message(_can_handle, &t, &id, &len, data, FALSE, 0);
+    err = CANAPI::can_read_message(_can_handle, &id, &len, data, FALSE, 0);
     while (!err) {
-        _parseMessage(t, id, len, data);
-        err = CANAPI::can_read_message(_can_handle, &t, &id, &len, data, FALSE, 0);
+        _parseMessage(id, len, data);
+        err = CANAPI::can_read_message(_can_handle, &id, &len, data, FALSE, 0);
     }
     //ROS_ERROR("can_read_message returns %d.", err); // PCAN_ERROR_QRCVEMPTY(32) from Peak CAN means "Receive queue is empty". It is not an error.
 }
@@ -214,6 +230,9 @@ void AllegroHandDrv::_writeDevices()
 {
     double pwmDouble[DOF_JOINTS];
     short pwm[DOF_JOINTS];
+
+    if (!isJointInfoReady())
+        return;
 
     // convert to torque to pwm
     for (int i = 0; i < DOF_JOINTS; i++) {
@@ -232,14 +251,18 @@ void AllegroHandDrv::_writeDevices()
 
     for (int findex = 0; findex < 4; findex++) {
         CANAPI::command_set_torque(_can_handle, findex, &pwm[findex*4]);
-        // ROS_INFO("write torque %d: %d %d %d %d", findex, pwm[findex*4+0], pwm[findex*4+1], pwm[findex*4+2], pwm[findex*4+3]);
+        //ROS_INFO("write torque %d: %d %d %d %d", findex, pwm[findex*4+0], pwm[findex*4+1], pwm[findex*4+2], pwm[findex*4+3]);
     }
 }
 
-void AllegroHandDrv::_parseMessage(uint64_t timestamp_us, int id, int len, unsigned char* data)
+void AllegroHandDrv::_parseMessage(int id, int len, unsigned char* data)
 {
-    //v4
-    switch (id)
+    int tmppos[4];
+    int lIndexBase;
+    int i;
+
+    //v4 
+    switch (id) 
     {
         case ID_RTR_HAND_INFO:
         {
@@ -299,22 +322,18 @@ void AllegroHandDrv::_parseMessage(uint64_t timestamp_us, int id, int len, unsig
         case ID_RTR_FINGER_POSE_3:
         case ID_RTR_FINGER_POSE_4:
         {
-            const int findex = (id & 0x00000007); // Finger number
-            const int lIndexBase = findex * 4; // Finger base joint index
+            int findex = (id & 0x00000007);
 
-            //For each knuckle
-            for(int k=0;k < 4;k++) {
-                const int kindex = lIndexBase + k; // current knuckle index
+            tmppos[0] = (short) (data[0] | (data[1] << 8));
+            tmppos[1] = (short) (data[2] | (data[3] << 8));
+            tmppos[2] = (short) (data[4] | (data[5] << 8));
+            tmppos[3] = (short) (data[6] | (data[7] << 8));
 
-                // Get raw position
-                const int _pos_fixed_point = (short) (data[k*2] | (data[(k*2)+1] << 8));
-
-                // Compute the actual position in radian
-                const double _pos_floating_point = (double) _pos_fixed_point * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
-
-                // Update stored values
-                _curr_joint_values[kindex].new_point(timestamp_us, _pos_floating_point);
-            }
+            lIndexBase = findex * 4;
+            _curr_position[lIndexBase+0] = (double)(tmppos[0]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
+            _curr_position[lIndexBase+1] = (double)(tmppos[1]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
+            _curr_position[lIndexBase+2] = (double)(tmppos[2]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
+            _curr_position[lIndexBase+3] = (double)(tmppos[3]) * ( 333.3 / 65536.0 ) * ( M_PI/180.0);
 
             _curr_position_get |= (0x01 << (findex));
         }
